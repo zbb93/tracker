@@ -183,6 +183,7 @@ public class App {
 		newRecipeFrame.getContentPane().add(newRecipeFlavors);
 		newRecipeFrame.getContentPane().add(buttonPanel);
 		newRecipeFrame.pack();
+		newRecipeFrame.setLocationRelativeTo(frame);
 		newRecipeFrame.setVisible(true);
 	}
 
@@ -223,6 +224,7 @@ public class App {
 		SpringUtilities.makeCompactGrid(newFlavorPanel, 4, 2, 6, 6, 6, 6);
 		newFlavorFrame.add(newFlavorPanel);
 		newFlavorFrame.pack();
+		newFlavorFrame.setLocationRelativeTo(frame);
 		newFlavorFrame.setVisible(true);
 	}
 
@@ -456,10 +458,10 @@ public class App {
 	private static void showMakeRecipeView(Recipe recipe) {
 		int amountToMake = Integer.parseInt(JOptionPane.showInputDialog(
 				frame, "How many ml to make?"));
-//		String pgVgRatio =JOptionPane.showInputDialog(frame, "Enter your PG/VG ratio (PG/VG)");
-//		String[] pgVgSplit = pgVgRatio.split("/");
-//		int pg = Integer.parseInt(pgVgSplit[0]);
-//		int vg = Integer.parseInt(pgVgSplit[1]);
+		String pgVgRatio =JOptionPane.showInputDialog(frame, "Enter your PG/VG ratio (PG/VG)");
+		String[] pgVgSplit = pgVgRatio.split("/");
+		double pg = Double.parseDouble(pgVgSplit[0]);
+		double vg = Double.parseDouble(pgVgSplit[1]);
 
 
 
@@ -494,13 +496,13 @@ public class App {
 
 		//TODO: limit significant digits of output
 		JLabel pgLabel = new JLabel("Propylene Glycol: ");
-		JLabel pgAmountLabel = new JLabel(Double.toString(calculateMlPgToAdd(recipe, amountToMake) * Tracker.MW_PG) + " grams");
+		JLabel pgAmountLabel = new JLabel(Double.toString(calculateMlPgToAdd(recipe, amountToMake, pg) * Tracker.MW_PG) + " grams");
 
 		recipePanel.add(pgLabel);
 		recipePanel.add(pgAmountLabel);
 
 		JLabel vgLabel = new JLabel("Vegetable Glycerin: ");
-		JLabel vgAmountLabel = new JLabel(Double.toString(calculateMlVgToAdd(amountToMake) * Tracker.MW_VG) + " grams");
+		JLabel vgAmountLabel = new JLabel(Double.toString(calculateMlVgToAdd(amountToMake, vg) * Tracker.MW_VG) + " grams");
 
 		recipePanel.add(vgLabel);
 		recipePanel.add(vgAmountLabel);
@@ -520,7 +522,7 @@ public class App {
 
 		JPanel buttonPanel = new JPanel();
 		JButton makeThisRecipe = new JButton("Make this recipe");
-		makeThisRecipe.addActionListener(a -> makeRecipe(recipe, amountToMake));
+		makeThisRecipe.addActionListener(a -> makeRecipe(recipe, amountToMake, pg, vg));
 		buttonPanel.add(makeThisRecipe);
 		recipePanel.add(buttonPanel);
 
@@ -531,9 +533,9 @@ public class App {
 
 	}
 
-	private static void makeRecipe(Recipe recipe, double amount) {
-		tracker.usePg(calculateMlPgToAdd(recipe, amount));
-		tracker.useVg(calculateMlVgToAdd(amount));
+	private static void makeRecipe(Recipe recipe, double amount, double pg, double vg) {
+		tracker.usePg(calculateMlPgToAdd(recipe, amount, pg));
+		tracker.useVg(calculateMlVgToAdd(amount, vg));
 		tracker.useNicotine(calculateMlNicotineToAdd(amount));
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
 			tracker.useFlavor(entry.getKey(), calculateMlFlavorToAdd(entry.getKey(), entry.getValue(), amount));
@@ -545,8 +547,8 @@ public class App {
 		return (percentToAdd/100) * amountToMake * flavor.getMW();
 	}
 
-	private static double calculateMlPgToAdd(Recipe recipe, double amountToMake) {
-		double pgProportion = Double.parseDouble(properties.getProperty("pg.proportion"));
+	private static double calculateMlPgToAdd(Recipe recipe, double amountToMake, double pgProportion) {
+		//double pgProportion = Double.parseDouble(properties.getProperty("pg.proportion"));
 		double nicotinePg = Double.parseDouble(properties.getProperty("nicotine.pg"));
 		double pgToAdd = (amountToMake * (pgProportion/100));
 		return pgToAdd - (calculateMlNicotineToAdd(amountToMake) * (nicotinePg/100) + sumFlavorAmounts(recipe, amountToMake));
@@ -558,9 +560,9 @@ public class App {
 		return (nicotineStrength/nicotineMg) * amountToMake;
 	}
 
-	private static double calculateMlVgToAdd(double amountToMake) {
+	private static double calculateMlVgToAdd(double amountToMake, double vgProportion) {
 		double nicotineVg = Double.parseDouble(properties.getProperty("nicotine.vg"));
-		double vgProportion = Double.parseDouble(properties.getProperty("vg.proportion"));
+		//double vgProportion = Double.parseDouble(properties.getProperty("vg.proportion"));
 		double vgToAdd = (amountToMake * (vgProportion/100));
 		return vgToAdd - (calculateMlNicotineToAdd(amountToMake) * (nicotineVg/100));
 	}
