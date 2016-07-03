@@ -18,9 +18,10 @@ public class Tracker {
 	private ArrayList<Flavor> flavors;
 	private ArrayList<Recipe> recipes;
 	//TODO: Ask user to input these values on first time run and persist these values to file.
-	private double vg = 1000;
-	private double pg = 500;
-	private double nicotine = 250;
+	private double vg;
+	private double pg;
+	private double nicotine;
+	private double mwNicotineSolution;
 
 	public static final double MW_NICOTINE_100VG = 1.235;
 	public static final double MW_VG = 1.260;
@@ -284,5 +285,28 @@ public class Tracker {
 			writeRecipeToFile(recipe);
 		}
 		writePgVgNicToFile();
+	}
+
+	public void calculateMWofNicotine(String mg, String pgRatio, String vgRatio) {
+		final double MW_NICOTINE = 1.01;
+
+		if (mg == null || pgRatio == null || vgRatio == null) {
+			return;
+		}
+		double concentration = Double.parseDouble(mg);
+		double pg = Double.parseDouble(pgRatio);
+		double vg = Double.parseDouble(vgRatio);
+
+		double nicotinePercent = concentration / 10;
+		double weightOfNicotineInSolution = nicotinePercent * MW_NICOTINE;
+		double pgPercent = (100 - nicotinePercent) / (100 / pg);
+		double weightOfPgInSolution = pgPercent * MW_PG;
+		double vgPercent = (100 - nicotinePercent) / (100 / vg);
+		double weightOfVgInSolution = vgPercent * MW_VG;
+		mwNicotineSolution = (weightOfNicotineInSolution + weightOfPgInSolution + weightOfVgInSolution) / 100;
+	}
+
+	public double getMwNicotine() {
+		return mwNicotineSolution;
 	}
 }

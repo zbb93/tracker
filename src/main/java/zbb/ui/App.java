@@ -50,6 +50,9 @@ public class App {
 				throw new IOException("Sorry, unable to find " + filename);
 			}
 			properties.load(fis);
+			tracker.calculateMWofNicotine(properties.getProperty("nicotine.mg"),
+					properties.getProperty("nicotine.pg"),
+					properties.getProperty("nicotine.vg"));
 		} catch (IOException e) {
 			//TODO: error message cannot locate properties file. cleanup and close input stream.
 		}
@@ -464,63 +467,62 @@ public class App {
 		double pg = Double.parseDouble(pgVgSplit[0]);
 		double vg = Double.parseDouble(pgVgSplit[1]);
 
-
-
-		//TODO: Maybe center the labelPanel better?
 		JFrame recipeFrame = new JFrame(recipe.getName());
 		recipeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel recipePanel = new JPanel();
 		recipePanel.setLayout(new BoxLayout(recipePanel, BoxLayout.Y_AXIS));
 
-		JPanel namePanel = new JPanel();
-		JPanel descriptionPanel = new JPanel();
-
+		JPanel detailPanel = new JPanel(new SpringLayout());
 		JLabel nameLabel = new JLabel("Name: ");
 		JLabel name = new JLabel(recipe.getName());
-		namePanel.add(nameLabel);
-		namePanel.add(name);
+		detailPanel.add(nameLabel);
+		detailPanel.add(name);
 
 		JLabel descriptionLabel = new JLabel("Description: ");
 		JLabel description = new JLabel(recipe.getDescription());
-		descriptionPanel.add(descriptionLabel);
-		descriptionPanel.add(description);
+		detailPanel.add(descriptionLabel);
+		detailPanel.add(description);
 
-		recipePanel.add(namePanel);
-		recipePanel.add(descriptionPanel);
+		SpringUtilities.makeCompactGrid(detailPanel, 2, 2, 6, 6, 6, 6);
+		recipePanel.add(detailPanel);
+		recipePanel.add(new JSeparator());
 
 		//TODO: DecimalFormat behavior depends on locale, determine if any checks are necessary to ensure problems don't occur.
 		DecimalFormat df = new DecimalFormat("0.0##");
+		JPanel pgVgNicPanel = new JPanel(new SpringLayout());
 		JLabel nicotineLabel = new JLabel("Nicotine: ");
-		//TODO: MW of nicotine should be determined through user input
-		JLabel nicotine = new JLabel(df.format(calculateMlNicotineToAdd(amountToMake) * Tracker.MW_NICOTINE_100VG));
+		JLabel nicotine = new JLabel(df.format(calculateMlNicotineToAdd(amountToMake) * tracker.getMwNicotine()));
 
-		recipePanel.add(nicotineLabel);
-		recipePanel.add(nicotine);
+		pgVgNicPanel.add(nicotineLabel);
+		pgVgNicPanel.add(nicotine);
 
 		JLabel pgLabel = new JLabel("Propylene Glycol: ");
 		JLabel pgAmountLabel = new JLabel(df.format(calculateMlPgToAdd(recipe, amountToMake, pg) * Tracker.MW_PG) + " grams");
 
-		recipePanel.add(pgLabel);
-		recipePanel.add(pgAmountLabel);
+		pgVgNicPanel.add(pgLabel);
+		pgVgNicPanel.add(pgAmountLabel);
 
 		JLabel vgLabel = new JLabel("Vegetable Glycerin: ");
 		JLabel vgAmountLabel = new JLabel(df.format(calculateMlVgToAdd(amountToMake, vg) * Tracker.MW_VG) + " grams");
 
-		recipePanel.add(vgLabel);
-		recipePanel.add(vgAmountLabel);
-
+		pgVgNicPanel.add(vgLabel);
+		pgVgNicPanel.add(vgAmountLabel);
+		SpringUtilities.makeCompactGrid(pgVgNicPanel, 3, 2, 6, 6, 6, 6);
+		recipePanel.add(pgVgNicPanel);
+		recipePanel.add(new JSeparator());
 
 		JLabel flavorName;
 		JLabel flavorAmount;
+		JPanel flavorPanel = new JPanel(new SpringLayout());
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
-			JPanel flavorPanel = new JPanel();
-			flavorName = new JLabel(entry.getKey().getName() + " (" + entry.getKey().getManufacturer() + ")");
+			flavorName = new JLabel(entry.getKey().getName() + " (" + entry.getKey().getManufacturer() + "):");
 			flavorAmount = new JLabel(df.format(calculateMlFlavorToAdd(entry.getKey(),
 					entry.getValue(), amountToMake)) + " grams");
 			flavorPanel.add(flavorName);
 			flavorPanel.add(flavorAmount);
-			recipePanel.add(flavorPanel);
 		}
+		SpringUtilities.makeCompactGrid(flavorPanel, recipe.getRecipe().size(), 2, 6, 6, 6, 6);
+		recipePanel.add(flavorPanel);
 
 		JPanel buttonPanel = new JPanel();
 		JButton makeThisRecipe = new JButton("Make this recipe");
@@ -532,8 +534,6 @@ public class App {
 		recipeFrame.pack();
 		recipeFrame.setLocationRelativeTo(null);
 		recipeFrame.setVisible(true);
-
-
 	}
 
 	private static void makeRecipe(Recipe recipe, double amount, double pg, double vg) {
