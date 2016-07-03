@@ -305,4 +305,14 @@ public class Tracker {
 	public double getMwNicotine() {
 		return mwNicotineSolution;
 	}
+
+	public List<Flavor> buildAutoShoppingList(double amount) {
+		List<Flavor> shoppingList = new LinkedList<>();
+		for (Flavor flavor : flavors) {
+			if (flavor.getAmountRemaining() < amount) {
+				shoppingList.add(flavor);
+			}
+		}
+		return shoppingList;
+	}
 }

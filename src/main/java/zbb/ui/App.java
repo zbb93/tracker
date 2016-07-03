@@ -357,22 +357,34 @@ public class App {
 
 		nicotineSettings.add(nicotineVg);
 		nicotineSettings.add(nicotineVgField);
+		SpringUtilities.makeCompactGrid(nicotineSettings, 3, 2, 6, 6, 6, 6);
+		panel.add(nicotineSettings);
+		panel.add(new JSeparator());
 
+		panel.add(new JLabel("Flavor"));
+		JPanel amountRemSettingPanel = new JPanel();
+		JLabel amountRemLabel = new JLabel("Amount remaining before adding to shopping list (ml):");
+		JTextField amountRemField = new JTextField(properties.getProperty("flavor.amtrem") != null ?
+			properties.getProperty("flavor.amtrem") : "");
+		amountRemSettingPanel.add(amountRemLabel);
+		amountRemSettingPanel.add(amountRemField);
+		panel.add(amountRemSettingPanel);
+
+		JPanel buttons = new JPanel();
 		JButton ok = new JButton("Ok");
 		ok.addActionListener(a -> {
 			properties.setProperty("nicotine.mg", nicotineStrengthField.getText());
 			properties.setProperty("nicotine.pg", nicotinePgField.getText());
 			properties.setProperty("nicotine.vg", nicotineVgField.getText());
+			properties.setProperty("flavor.amtrem", amountRemField.getText());
 		});
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(a -> showMainMenu());
 
-		nicotineSettings.add(ok);
-		nicotineSettings.add(cancel);
+		buttons.add(ok);
+		buttons.add(cancel);
 
-		SpringUtilities.makeCompactGrid(nicotineSettings, 4, 2, 6, 6, 6, 6);
-
-		panel.add(nicotineSettings);
+		panel.add(buttons);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 	}
@@ -399,9 +411,12 @@ public class App {
 	private static void showReportView() {
 		panel.removeAll();
 
-		JLabel todo = new JLabel("TODO");
+		JPanel buttons = new JPanel();
+		JButton generateShoppingList = new JButton("Generate a shopping list");
+		generateShoppingList.addActionListener(a -> buildAndShowAutoShoppingList());
+		buttons.add(generateShoppingList);
 
-		panel.add(todo);
+		frame.add(buttons);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 	}
@@ -586,5 +601,26 @@ public class App {
 			sum += (entry.getValue()/100) * amount;
 		}
 		return sum;
+	}
+
+	private static void buildAndShowAutoShoppingList() {
+		double amount = Double.parseDouble(properties.getProperty("flavor.amtrem") != null ?
+			properties.getProperty("flavor.amtrem") : promptUserForAmtRem());
+		List<Flavor> shoppingList = tracker.buildAutoShoppingList(amount);
+		JFrame shoppingListFrame = new JFrame("Shopping List");
+		shoppingListFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		JPanel shoppingListPanel = new JPanel();
+		JTable shoppingListTable = new JTable(new FlavorTableModel(shoppingList));
+		JScrollPane tablePane = new JScrollPane(shoppingListTable);
+		tablePane.setPreferredSize(new Dimension(700, 200));
+		shoppingListPanel.add(tablePane);
+		shoppingListFrame.add(shoppingListPanel);
+		shoppingListFrame.pack();
+		shoppingListFrame.setLocationRelativeTo(frame);
+		shoppingListFrame.setVisible(true);
+	}
+
+	private static String promptUserForAmtRem() {
+		return JOptionPane.showInputDialog(frame, "Add flavors below how many ml's to shopping list?");
 	}
 }
