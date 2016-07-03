@@ -21,6 +21,7 @@ import zbb.tracker.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.io.*;
 import java.util.List;
@@ -487,22 +488,23 @@ public class App {
 		recipePanel.add(namePanel);
 		recipePanel.add(descriptionPanel);
 
+		//TODO: DecimalFormat behavior depends on locale, determine if any checks are necessary to ensure problems don't occur.
+		DecimalFormat df = new DecimalFormat("0.0##");
 		JLabel nicotineLabel = new JLabel("Nicotine: ");
 		//TODO: MW of nicotine should be determined through user input
-		JLabel nicotine = new JLabel(Double.toString(calculateMlNicotineToAdd(amountToMake) * Tracker.MW_NICOTINE_100VG));
+		JLabel nicotine = new JLabel(df.format(calculateMlNicotineToAdd(amountToMake) * Tracker.MW_NICOTINE_100VG));
 
 		recipePanel.add(nicotineLabel);
 		recipePanel.add(nicotine);
 
-		//TODO: limit significant digits of output
 		JLabel pgLabel = new JLabel("Propylene Glycol: ");
-		JLabel pgAmountLabel = new JLabel(Double.toString(calculateMlPgToAdd(recipe, amountToMake, pg) * Tracker.MW_PG) + " grams");
+		JLabel pgAmountLabel = new JLabel(df.format(calculateMlPgToAdd(recipe, amountToMake, pg) * Tracker.MW_PG) + " grams");
 
 		recipePanel.add(pgLabel);
 		recipePanel.add(pgAmountLabel);
 
 		JLabel vgLabel = new JLabel("Vegetable Glycerin: ");
-		JLabel vgAmountLabel = new JLabel(Double.toString(calculateMlVgToAdd(amountToMake, vg) * Tracker.MW_VG) + " grams");
+		JLabel vgAmountLabel = new JLabel(df.format(calculateMlVgToAdd(amountToMake, vg) * Tracker.MW_VG) + " grams");
 
 		recipePanel.add(vgLabel);
 		recipePanel.add(vgAmountLabel);
@@ -513,7 +515,7 @@ public class App {
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
 			JPanel flavorPanel = new JPanel();
 			flavorName = new JLabel(entry.getKey().getName() + " (" + entry.getKey().getManufacturer() + ")");
-			flavorAmount = new JLabel(Double.toString(calculateMlFlavorToAdd(entry.getKey(),
+			flavorAmount = new JLabel(df.format(calculateMlFlavorToAdd(entry.getKey(),
 					entry.getValue(), amountToMake)) + " grams");
 			flavorPanel.add(flavorName);
 			flavorPanel.add(flavorAmount);
@@ -528,6 +530,7 @@ public class App {
 
 		recipeFrame.add(recipePanel);
 		recipeFrame.pack();
+		recipeFrame.setLocationRelativeTo(null);
 		recipeFrame.setVisible(true);
 
 
@@ -548,7 +551,9 @@ public class App {
 	}
 
 	private static double calculateMlPgToAdd(Recipe recipe, double amountToMake, double pgProportion) {
-		//double pgProportion = Double.parseDouble(properties.getProperty("pg.proportion"));
+		if (pgProportion == 0) {
+			return 0;
+		}
 		double nicotinePg = Double.parseDouble(properties.getProperty("nicotine.pg"));
 		double pgToAdd = (amountToMake * (pgProportion/100));
 		return pgToAdd - (calculateMlNicotineToAdd(amountToMake) * (nicotinePg/100) + sumFlavorAmounts(recipe, amountToMake));
@@ -562,7 +567,6 @@ public class App {
 
 	private static double calculateMlVgToAdd(double amountToMake, double vgProportion) {
 		double nicotineVg = Double.parseDouble(properties.getProperty("nicotine.vg"));
-		//double vgProportion = Double.parseDouble(properties.getProperty("vg.proportion"));
 		double vgToAdd = (amountToMake * (vgProportion/100));
 		return vgToAdd - (calculateMlNicotineToAdd(amountToMake) * (nicotineVg/100));
 	}
