@@ -9,6 +9,7 @@ import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by zbb on 6/6/16.
@@ -307,12 +308,6 @@ public class Tracker {
 	}
 
 	public List<Flavor> buildAutoShoppingList(double amount) {
-		List<Flavor> shoppingList = new LinkedList<>();
-		for (Flavor flavor : flavors) {
-			if (flavor.getAmountRemaining() < amount) {
-				shoppingList.add(flavor);
-			}
-		}
-		return shoppingList;
+		return flavors.stream().filter(flavor -> flavor.getAmountRemaining() < amount).collect(Collectors.toList());
 	}
 }
