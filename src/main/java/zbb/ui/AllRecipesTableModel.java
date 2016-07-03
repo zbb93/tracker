@@ -19,18 +19,17 @@ package zbb.ui;
 import zbb.entities.Recipe;
 
 import javax.swing.table.AbstractTableModel;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
  * Created by zbb on 6/21/16.
+ *
  */
-public class AllRecipesTableModel extends AbstractTableModel{
+class AllRecipesTableModel extends AbstractTableModel{
 	private String[] columns = {"Name", "Description"};
-	private Type[] colType = {String.class, String.class};
 	private List<Recipe> recipes;
 
-	public AllRecipesTableModel(List<Recipe> recipes) {
+	AllRecipesTableModel(List<Recipe> recipes) {
 		this.recipes = recipes;
 	}
 	@Override
@@ -53,5 +52,10 @@ public class AllRecipesTableModel extends AbstractTableModel{
 				return recipe.getDescription();
 		}
 		return null;
+	}
+
+	@Override
+	public String getColumnName(int i) {
+		return columns[i];
 	}
 }

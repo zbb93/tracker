@@ -237,15 +237,20 @@ public class App {
 		panel.removeAll();
 		JTable flavorTable = new JTable(new FlavorTableModel(tracker.getFlavors()));
 		flavorTable.getSelectionModel().addListSelectionListener(a -> {
-				if (flavorTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
-					String manf = (String) flavorTable.getValueAt(flavorTable.getSelectedRow(), 1);
-					String name = (String) flavorTable.getValueAt(flavorTable.getSelectedRow(), 0);
-					Flavor flavor = tracker.findFlavor(manf, name);
-					showIndividualFlavorView(flavor);
-				}
+			if (flavorTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
+				String name = (String) flavorTable.getValueAt(flavorTable.getSelectedRow(), 0);
+				String[] nameAndManf = name.split("\\(");
+				nameAndManf[1] = nameAndManf[1].replace(")", "");
+				nameAndManf[0] = nameAndManf[0].trim();
+				nameAndManf[1] = nameAndManf[1].trim();
+				Flavor flavor = tracker.findFlavor(nameAndManf[1], nameAndManf[0]);
+				showIndividualFlavorView(flavor);
+			}
 		});
-		flavorTable.setPreferredSize(new Dimension(500, 200));
-		panel.add(flavorTable);
+		flavorTable.setAutoCreateRowSorter(true);
+		JScrollPane tablePane = new JScrollPane(flavorTable);
+		tablePane.setPreferredSize(new Dimension(700, 200));
+		panel.add(tablePane);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 	}
@@ -260,8 +265,10 @@ public class App {
 					showIndividualRecipeView(recipe);
 				}
 			});
-		recipeTable.setPreferredSize(new Dimension(500, 200));
-		panel.add(recipeTable);
+		recipeTable.setAutoCreateRowSorter(true);
+		JScrollPane tablePane = new JScrollPane(recipeTable);
+		tablePane.setPreferredSize(new Dimension(700, 200));
+		panel.add(tablePane);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 	}
@@ -276,8 +283,10 @@ public class App {
 					showMakeRecipeView(recipe);
 				}
 			});
-		recipeTable.setPreferredSize(new Dimension(500, 200));
-		panel.add(recipeTable);
+		recipeTable.setAutoCreateRowSorter(true);
+		JScrollPane tablePane = new JScrollPane(recipeTable);
+		tablePane.setPreferredSize(new Dimension(700, 200));
+		panel.add(tablePane);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 	}

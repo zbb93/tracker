@@ -278,12 +278,8 @@ public class Tracker {
 	}
 
 	public void save() {
-		for (Flavor flavor : flavors) {
-			writeFlavorToFile(flavor);
-		}
-		for (Recipe recipe : recipes) {
-			writeRecipeToFile(recipe);
-		}
+		flavors.stream().forEach(this::writeFlavorToFile);
+		recipes.stream().forEach(this::writeRecipeToFile);
 		writePgVgNicToFile();
 	}
 

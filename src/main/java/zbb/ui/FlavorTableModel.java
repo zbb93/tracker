@@ -19,20 +19,19 @@ package zbb.ui;
 import zbb.entities.Flavor;
 
 import javax.swing.table.AbstractTableModel;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
  * Created by zbb on 6/11/16.
  *
  */
-public class FlavorTableModel extends AbstractTableModel {
+class FlavorTableModel extends AbstractTableModel {
 
-	private String[] columns = {"Name", "Manufacturer", "Amount Remaining"};
-	private Type[] colTypes = {String.class, String.class, Integer.class};
+	private String[] columns = {"Name", "Amount Remaining"};
+	//private Type[] colTypes = {String.class, Double.class};
 	private List<Flavor> flavors;
 
-	public FlavorTableModel(List<Flavor> flavors) {
+	FlavorTableModel(List<Flavor> flavors) {
 		this.flavors = flavors;
 	}
 
@@ -51,12 +50,15 @@ public class FlavorTableModel extends AbstractTableModel {
 		Flavor flavor = flavors.get(row);
 		switch (col) {
 			case (0):
-				return flavor.getName();
+				return flavor.getName() + " (" + flavor.getManufacturer() + ")";
 			case (1):
-				return flavor.getManufacturer();
-			case (2):
 				return flavor.getAmountRemaining();
 		}
 		return null;
+	}
+
+	@Override
+	public String getColumnName(int i) {
+		return columns[i];
 	}
 }

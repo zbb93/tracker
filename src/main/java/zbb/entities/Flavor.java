@@ -58,7 +58,8 @@ public class Flavor implements Serializable{
 		} else if (!(other instanceof Flavor)) {
 			return false;
 		} else {
-			return this.name.equals(((Flavor) other).name) && this.manufacturer.equals(((Flavor) other).manufacturer);
+			return this.name.equals(((Flavor) other).getName()) &&
+					this.manufacturer.equals(((Flavor) other).getManufacturer());
 		}
 	}
 
