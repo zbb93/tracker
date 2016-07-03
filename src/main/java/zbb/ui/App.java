@@ -325,6 +325,14 @@ public class App {
 		labelPanel.add(amountRemainingLabel);
 		contentPanel.add(amountRemaining);
 
+		JLabel recipesUsedIn = new JLabel("Recipes used in:");
+		labelPanel.add(recipesUsedIn);
+		List<Recipe> recipes = tracker.getRecipesThatUse(flavor);
+		for (Recipe recipe : recipes) {
+			JLabel recipeName = new JLabel(recipe.getName());
+			contentPanel.add(recipeName);
+		}
+
 		flavorPanel.add(labelPanel);
 		flavorPanel.add(contentPanel);
 		flavorFrame.add(flavorPanel);

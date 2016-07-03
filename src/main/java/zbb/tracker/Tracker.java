@@ -310,4 +310,18 @@ public class Tracker {
 	public List<Flavor> buildAutoShoppingList(double amount) {
 		return flavors.stream().filter(flavor -> flavor.getAmountRemaining() < amount).collect(Collectors.toList());
 	}
+
+	public List<Recipe> getRecipesThatUse(Flavor flavor) {
+		List<Recipe> usedIn = new LinkedList<>();
+		for (Recipe recipe : recipes) {
+			Map<Flavor, Double> flavors = recipe.getRecipe();
+			for (Flavor flavorInRecipe : flavors.keySet()) {
+				if (flavor.equals(flavorInRecipe)) {
+					usedIn.add(recipe);
+					break;
+				}
+			}
+		}
+		return usedIn;
+	}
 }
