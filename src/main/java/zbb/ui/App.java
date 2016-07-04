@@ -53,7 +53,6 @@ public class App {
 					properties.getProperty("nicotine.pg"),
 					properties.getProperty("nicotine.vg"));
 		} catch (IOException e) {
-			//TODO: error message cannot locate properties file. cleanup and close input stream.
 			int response = JOptionPane.showConfirmDialog(frame,
 					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
 					"Unable to Locate Properties File", JOptionPane.YES_NO_OPTION);
