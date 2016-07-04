@@ -36,18 +36,17 @@ public class App {
 	private static Properties properties;
 
 	public static void main(String[] args) {
-		init();
-		javax.swing.SwingUtilities.invokeLater(App::createAndShowGUI);
+		if (init()) {
+			javax.swing.SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
+		}
 	}
 
-	private static void init() {
+	private static boolean init() {
 		tracker = new Tracker();
 		properties = new Properties();
-		try {
-			String filename = "config.properties";
-			FileInputStream fis = new FileInputStream(filename);
+		try (FileInputStream fis = new FileInputStream("config.properties")) {
 			if (!fis.getFD().valid()) {
-				throw new IOException("Sorry, unable to find " + filename);
+				throw new IOException("Sorry, unable to find file: " + fis.getFD().toString());
 			}
 			properties.load(fis);
 			tracker.calculateMWofNicotine(properties.getProperty("nicotine.mg"),
@@ -55,10 +54,49 @@ public class App {
 					properties.getProperty("nicotine.vg"));
 		} catch (IOException e) {
 			//TODO: error message cannot locate properties file. cleanup and close input stream.
+			int response = JOptionPane.showConfirmDialog(frame,
+					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
+					"Unable to Locate Properties File", JOptionPane.YES_NO_OPTION);
+			if (response == 0) {
+				javax.swing.SwingUtilities.invokeLater(App::buildMainFrameShowPrefrences);
+			} else {
+				javax.swing.SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
+			}
+			return false;
 		}
+		return true;
 	}
 
-	private static void createAndShowGUI() {
+	private static void buildMainFrameShowPrefrences() {
+		//Create and set up the window.
+		frame = new JFrame("Eliquid Manager");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		panel = new JPanel(new BorderLayout());
+		frame.setContentPane(panel);
+
+		JMenuBar menuBar = new JMenuBar();
+		JMenu menu = new JMenu("File");
+		JMenuItem mainMenu = new JMenuItem("Main Menu");
+		mainMenu.addActionListener(a -> showMainMenu());
+		menu.add(mainMenu);
+		JMenuItem menuItem = new JMenuItem("Preferences");
+		menuItem.addActionListener(a -> showPreferencesView());
+		menu.add(menuItem);
+		menuBar.add(menu);
+		menu = new JMenu("View");
+		menuItem = new JMenuItem("Recipes");
+		menuItem.addActionListener(a -> showRecipeView());
+		menu.add(menuItem);
+		menuItem = new JMenuItem("Flavors");
+		menuItem.addActionListener(a -> showFlavorView());
+		menu.add(menuItem);
+		menuBar.add(menu);
+		frame.setJMenuBar(menuBar);
+		showPreferencesView();
+	}
+
+	private static void buildMainFrameShowMainMenu() {
 		//Create and set up the window.
 		frame = new JFrame("Eliquid Manager");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,13 +122,7 @@ public class App {
 		menu.add(menuItem);
 		menuBar.add(menu);
 		frame.setJMenuBar(menuBar);
-
 		showMainMenu();
-
-		//Display the window.
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 	}
 
 	private static void showFlavorView() {
@@ -360,21 +392,21 @@ public class App {
 
 		JLabel nicotineStrength = new JLabel("Strength (mg/ml):");
 		JTextField nicotineStrengthField = new JTextField(properties.getProperty("nicotine.mg") != null ?
-				properties.getProperty("nicotine.mg") : "");
+				properties.getProperty("nicotine.mg") : " ");
 
 		nicotineSettings.add(nicotineStrength);
 		nicotineSettings.add(nicotineStrengthField);
 
 		JLabel nicotinePg = new JLabel("Percent PG:");
 		JTextField nicotinePgField = new JTextField(properties.getProperty("nicotine.pg") != null ?
-			properties.getProperty("nicotine.pg") : "");
+			properties.getProperty("nicotine.pg") : " ");
 
 		nicotineSettings.add(nicotinePg);
 		nicotineSettings.add(nicotinePgField);
 
 		JLabel nicotineVg = new JLabel("Percent VG:");
 		JTextField nicotineVgField = new JTextField(properties.getProperty("nicotine.vg") != null ?
-			properties.getProperty("nicotine.vg") : "");
+			properties.getProperty("nicotine.vg") : " ");
 
 		nicotineSettings.add(nicotineVg);
 		nicotineSettings.add(nicotineVgField);
@@ -386,7 +418,7 @@ public class App {
 		JPanel amountRemSettingPanel = new JPanel();
 		JLabel amountRemLabel = new JLabel("Amount remaining before adding to shopping list (ml):");
 		JTextField amountRemField = new JTextField(properties.getProperty("flavor.amtrem") != null ?
-			properties.getProperty("flavor.amtrem") : "");
+			properties.getProperty("flavor.amtrem") : " ");
 		amountRemSettingPanel.add(amountRemLabel);
 		amountRemSettingPanel.add(amountRemField);
 		panel.add(amountRemSettingPanel);
@@ -408,6 +440,7 @@ public class App {
 		panel.add(buttons);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	private static void showMainMenu() {
@@ -427,6 +460,8 @@ public class App {
 
 		panel.add(menuButtons);
 		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
 	}
 
 	private static void showReportView() {
