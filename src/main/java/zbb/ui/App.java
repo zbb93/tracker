@@ -300,41 +300,50 @@ public class App {
 	}
 
 	private static void showIndividualFlavorView(Flavor flavor) {
-		//TODO: Show which recipes a flavor is in in this window
 		JFrame flavorFrame = new JFrame(flavor.getName());
 		flavorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel flavorPanel = new JPanel();
+		flavorPanel.setLayout(new BoxLayout(flavorPanel, BoxLayout.Y_AXIS));
 
-		JPanel labelPanel = new JPanel();
-		JPanel contentPanel = new JPanel();
-		labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+		JPanel labelPanel = new JPanel(new SpringLayout());
 
 		JLabel nameLabel = new JLabel("Name: ");
 		JLabel name = new JLabel(flavor.getName());
 		labelPanel.add(nameLabel);
-		contentPanel.add(name);
+		labelPanel.add(name);
 
 		JLabel manfLabel = new JLabel("Manufacturer: ");
 		JLabel manf = new JLabel(flavor.getManufacturer());
 		labelPanel.add(manfLabel);
-		contentPanel.add(manf);
+		labelPanel.add(manf);
 
 		JLabel amountRemainingLabel = new JLabel("Amount Remaining (ml): ");
 		JLabel amountRemaining = new JLabel(Double.toString(flavor.getAmountRemaining()));
 		labelPanel.add(amountRemainingLabel);
-		contentPanel.add(amountRemaining);
+		labelPanel.add(amountRemaining);
+		SpringUtilities.makeCompactGrid(labelPanel, 3, 2, 6, 6, 6, 6);
+		flavorPanel.add(labelPanel);
+		flavorPanel.add(new JSeparator());
 
+		JPanel lowerPanel = new JPanel();
+		JPanel recipePanel = new JPanel(new BorderLayout());
 		JLabel recipesUsedIn = new JLabel("Recipes used in:");
-		labelPanel.add(recipesUsedIn);
+		recipePanel.add(recipesUsedIn, BorderLayout.NORTH);
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		List<Recipe> recipes = tracker.getRecipesThatUse(flavor);
 		for (Recipe recipe : recipes) {
-			JLabel recipeName = new JLabel(recipe.getName());
-			contentPanel.add(recipeName);
+			JButton recipeName = new JButton(recipe.getName());
+			recipeName.addActionListener(a -> showIndividualRecipeView(tracker.findRecipe(recipeName.getText())));
+			recipeName.setBorderPainted(false);
+			recipeName.setBackground(Color.WHITE);
+			recipeName.setFocusPainted(false);
+			buttonPanel.add(recipeName);
 		}
+		lowerPanel.add(recipePanel);
+		lowerPanel.add(buttonPanel);
+		flavorPanel.add(lowerPanel);
 
-		flavorPanel.add(labelPanel);
-		flavorPanel.add(contentPanel);
 		flavorFrame.add(flavorPanel);
 		flavorFrame.pack();
 		flavorFrame.setLocationRelativeTo(frame);
@@ -624,6 +633,17 @@ public class App {
 		shoppingListFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel shoppingListPanel = new JPanel();
 		JTable shoppingListTable = new JTable(new FlavorTableModel(shoppingList));
+		shoppingListTable.getSelectionModel().addListSelectionListener(a -> {
+			if (shoppingListTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
+				String name = (String) shoppingListTable.getValueAt(shoppingListTable.getSelectedRow(), 0);
+				String[] nameAndManf = name.split("\\(");
+				nameAndManf[1] = nameAndManf[1].replace(")", "");
+				nameAndManf[0] = nameAndManf[0].trim();
+				nameAndManf[1] = nameAndManf[1].trim();
+				Flavor flavor = tracker.findFlavor(nameAndManf[1], nameAndManf[0]);
+				showIndividualFlavorView(flavor);
+			}
+		});
 		JScrollPane tablePane = new JScrollPane(shoppingListTable);
 		tablePane.setPreferredSize(new Dimension(700, 200));
 		shoppingListPanel.add(tablePane);
