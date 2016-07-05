@@ -26,8 +26,8 @@ import java.util.List;
  *
  */
 class AllRecipesTableModel extends AbstractTableModel{
-	private String[] columns = {"Name", "Description"};
-	private List<Recipe> recipes;
+	private final String[] columns = {"Name", "Description"};
+	private final List<Recipe> recipes;
 
 	AllRecipesTableModel(List<Recipe> recipes) {
 		this.recipes = recipes;

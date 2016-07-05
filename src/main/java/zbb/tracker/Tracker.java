@@ -1,15 +1,12 @@
 package zbb.tracker;
 
-import com.sun.istack.internal.Nullable;
-import com.thoughtworks.xstream.XStream;
 import zbb.entities.Flavor;
 import zbb.entities.Recipe;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
+import org.jetbrains.annotations.*;
 
 /**
  * Created by zbb on 6/6/16.
@@ -24,7 +21,6 @@ public class Tracker {
 	private double nicotine;
 	private double mwNicotineSolution;
 
-	public static final double MW_NICOTINE_100VG = 1.235;
 	public static final double MW_VG = 1.260;
 	public static final double MW_PG = 1.040;
 
@@ -34,7 +30,7 @@ public class Tracker {
 		loadPgVgNicFromFile();
 	}
 
-	private ArrayList<Flavor> loadFlavorsFromFile() {
+	private void loadFlavorsFromFile() {
 		flavors = new ArrayList<>();
 		File flavorFolder = new File("flavors/");
 		File[] flavorFiles = flavorFolder.listFiles();
@@ -46,10 +42,9 @@ public class Tracker {
 				}
 			}
 		}
-		return flavors;
 	}
 
-	private ArrayList<Recipe> loadRecipesFromFile() {
+	private void loadRecipesFromFile() {
 		recipes = new ArrayList<>();
 		File recipeFolder = new File("recipes/");
 		File[] recipeFiles = recipeFolder.listFiles();
@@ -59,7 +54,6 @@ public class Tracker {
 				recipes.add(recipe);
 			}
 		}
-		return recipes;
 	}
 
 	private void loadPgVgNicFromFile() {
@@ -89,12 +83,12 @@ public class Tracker {
 	}
 
 
-	public void addFlavor(Flavor flavor) {
+	public void addFlavor(@NotNull Flavor flavor) {
 		flavors.add(flavor);
 		writeFlavorToFile(flavor);
 	}
 
-	public void addRecipe(Recipe recipe) {
+	public void addRecipe(@NotNull Recipe recipe) {
 		recipes.add(recipe);
 		writeRecipeToFile(recipe);
 	}
@@ -112,10 +106,12 @@ public class Tracker {
 			exc.printStackTrace();
 		} finally {
 			try {
-				if (oos != null)
+				if (oos != null) {
 					oos.close();
-				if (fos != null)
+				}
+				if (fos != null) {
 					fos.close();
+				}
 			} catch (NullPointerException|IOException e) {
 				e.printStackTrace();
 			}
@@ -137,10 +133,12 @@ public class Tracker {
 			exc.printStackTrace();
 		} finally {
 			try {
-				if (ois != null)
+				if (ois != null) {
 					ois.close();
-				if (fis != null)
+				}
+				if (fis != null) {
 					fis.close();
+				}
 			} catch (NullPointerException|IOException e) {
 				e.printStackTrace();
 			}
@@ -163,8 +161,9 @@ public class Tracker {
 			exc.printStackTrace();
 		} finally {
 			try {
-				if (fos != null)
+				if (fos != null) {
 					fos.close();
+				}
 				if (oos != null) {
 					oos.close();
 				}
@@ -191,10 +190,12 @@ public class Tracker {
 			exc.printStackTrace();
 		} finally {
 			try {
-				if (ois != null)
+				if (ois != null) {
 					ois.close();
-				if (fis != null)
+				}
+				if (fis != null) {
 					fis.close();
+				}
 			} catch (NullPointerException|IOException e) {
 				e.printStackTrace();
 			}
@@ -203,12 +204,13 @@ public class Tracker {
 	}
 
 
+	@NotNull
 	public List<Flavor> getFlavors() {
 		return flavors;
 	}
 
 	@Nullable
-	public Flavor findFlavor(String manf, String name) {
+	public Flavor findFlavor(@NotNull String manf, @NotNull String name) {
 		Flavor toFind = new Flavor(manf, name);
 		for (Flavor flavor : flavors) {
 			if (flavor.equals(toFind)) {
@@ -219,7 +221,7 @@ public class Tracker {
 	}
 
 	@Nullable
-	public Recipe findRecipe(String name) {
+	public Recipe findRecipe(@NotNull String name) {
 		for (Recipe recipe : recipes) {
 			if (recipe.getName().equals(name)) {
 				return recipe;
@@ -268,7 +270,7 @@ public class Tracker {
 		return nicotine;
 	}
 
-	public void useFlavor(Flavor flavorUsed, double amount) {
+	public void useFlavor(@NotNull Flavor flavorUsed, double amount) {
 		for (Flavor flavor : flavors) {
 			if (flavor.equals(flavorUsed)) {
 				flavor.use(amount);
@@ -284,7 +286,7 @@ public class Tracker {
 		writePgVgNicToFile();
 	}
 
-	public void calculateMWofNicotine(String mg, String pgRatio, String vgRatio) {
+	public void calculateMWofNicotine(@Nullable String mg, @Nullable String pgRatio, @Nullable String vgRatio) {
 		final double MW_NICOTINE = 1.01;
 
 		if (mg == null || pgRatio == null || vgRatio == null) {
@@ -311,7 +313,7 @@ public class Tracker {
 		return flavors.stream().filter(flavor -> flavor.getAmountRemaining() < amount).collect(Collectors.toList());
 	}
 
-	public List<Recipe> getRecipesThatUse(Flavor flavor) {
+	public List<Recipe> getRecipesThatUse(@NotNull Flavor flavor) {
 		List<Recipe> usedIn = new LinkedList<>();
 		for (Recipe recipe : recipes) {
 			Map<Flavor, Double> flavors = recipe.getRecipe();

@@ -27,9 +27,8 @@ import java.util.List;
  */
 class FlavorTableModel extends AbstractTableModel {
 
-	private String[] columns = {"Name", "Amount Remaining"};
-	//private Type[] colTypes = {String.class, Double.class};
-	private List<Flavor> flavors;
+	private final String[] columns = {"Name", "Amount Remaining"};
+	private final List<Flavor> flavors;
 
 	FlavorTableModel(List<Flavor> flavors) {
 		this.flavors = flavors;
@@ -50,7 +49,11 @@ class FlavorTableModel extends AbstractTableModel {
 		Flavor flavor = flavors.get(row);
 		switch (col) {
 			case (0):
-				return flavor.getName() + " (" + flavor.getManufacturer() + ")";
+				if (!flavor.getManufacturer().equals("")) {
+					return flavor.getName() + " (" + flavor.getManufacturer() + ")";
+				} else {
+					return flavor.getName();
+				}
 			case (1):
 				return flavor.getAmountRemaining();
 		}

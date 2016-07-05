@@ -22,7 +22,7 @@ public class Flavor implements Serializable{
 		this(manf, name, -1);
 	}
 
-	public Flavor(@NotNull String manf, @NotNull String name, int amount) {
+	public Flavor(@NotNull String manf, @NotNull String name, double amount) {
 		this.manufacturer = manf;
 		this.name = name;
 		if (amount > 0) {

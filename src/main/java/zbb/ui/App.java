@@ -21,7 +21,7 @@ import zbb.tracker.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.DecimalFormat;
+import java.text.*;
 import java.util.*;
 import java.io.*;
 import java.util.List;
@@ -35,9 +35,9 @@ public class App {
 	private static JPanel panel;
 	private static Properties properties;
 
-	public static void main(String[] args) {
+	public static void main(String... args) {
 		if (init()) {
-			javax.swing.SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
+			SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
 		}
 	}
 
@@ -57,9 +57,9 @@ public class App {
 					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
 					"Unable to Locate Properties File", JOptionPane.YES_NO_OPTION);
 			if (response == 0) {
-				javax.swing.SwingUtilities.invokeLater(App::buildMainFrameShowPrefrences);
+				SwingUtilities.invokeLater(App::buildMainFrameShowPrefrences);
 			} else {
-				javax.swing.SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
+				SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
 			}
 			return false;
 		}
@@ -266,19 +266,25 @@ public class App {
 		newFlavorFrame.setVisible(true);
 	}
 
-	private static void showExistingFlavorsView() {
-		//TODO: display remaining amount of PG/VG/Nicotine somewhere in this window
+		private static void showExistingFlavorsView() {
 		panel.removeAll();
-		JTable flavorTable = new JTable(new FlavorTableModel(tracker.getFlavors()));
+		List<Flavor> flavors = tracker.getFlavors();
+		//Add dummy flavors for pg/vg/nicotine.
+		flavors.add(new Flavor("", "Propylene Glycol", tracker.getPg()));
+		flavors.add(new Flavor("", "Vegetable Glycerin", tracker.getVg()));
+		flavors.add(new Flavor("", "Nicotine", tracker.getNicotine()));
+		JTable flavorTable = new JTable(new FlavorTableModel(flavors));
 		flavorTable.getSelectionModel().addListSelectionListener(a -> {
 			if (flavorTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
 				String name = (String) flavorTable.getValueAt(flavorTable.getSelectedRow(), 0);
 				String[] nameAndManf = name.split("\\(");
-				nameAndManf[1] = nameAndManf[1].replace(")", "");
-				nameAndManf[0] = nameAndManf[0].trim();
-				nameAndManf[1] = nameAndManf[1].trim();
-				Flavor flavor = tracker.findFlavor(nameAndManf[1], nameAndManf[0]);
-				showIndividualFlavorView(flavor);
+				if (nameAndManf.length == 2) {
+					nameAndManf[1] = nameAndManf[1].replace(")", "");
+					nameAndManf[0] = nameAndManf[0].trim();
+					nameAndManf[1] = nameAndManf[1].trim();
+					Flavor flavor = tracker.findFlavor(nameAndManf[1], nameAndManf[0]);
+					showIndividualFlavorView(flavor);
+				}
 			}
 		});
 		flavorTable.setAutoCreateRowSorter(true);
@@ -330,7 +336,7 @@ public class App {
 		tracker.addFlavor(flavor);
 	}
 
-	private static void showIndividualFlavorView(Flavor flavor) {
+	private static void showIndividualFlavorView(@NotNull Flavor flavor) {
 		JFrame flavorFrame = new JFrame(flavor.getName());
 		flavorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel flavorPanel = new JPanel();
@@ -484,7 +490,7 @@ public class App {
 		tracker.addRecipe(recipe);
 	}
 
-	private static Map<Flavor, Double> getRecipeFromTextFields(List<JTextField> textFields) {
+	private static Map<Flavor, Double> getRecipeFromTextFields(@NotNull List<JTextField> textFields) {
 		Map<Flavor, Double> recipe = new HashMap<>();
 		for (Iterator<JTextField> i = textFields.iterator(); i.hasNext();) {
 			JTextField nameField = i.next();
@@ -499,7 +505,7 @@ public class App {
 		return recipe;
 	}
 
-	private static void showIndividualRecipeView(Recipe recipe) {
+	private static void showIndividualRecipeView(@NotNull Recipe recipe) {
 		JFrame recipeFrame = new JFrame(recipe.getName());
 		recipeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel recipePanel = new JPanel();
@@ -538,7 +544,7 @@ public class App {
 		recipeFrame.setVisible(true);
 	}
 
-	private static void showMakeRecipeView(Recipe recipe) {
+	private static void showMakeRecipeView(@NotNull Recipe recipe) {
 		int amountToMake = Integer.parseInt(JOptionPane.showInputDialog(
 				frame, "How many ml to make?"));
 		String pgVgRatio =JOptionPane.showInputDialog(frame, "Enter your PG/VG ratio (PG/VG)");
@@ -615,7 +621,7 @@ public class App {
 		recipeFrame.setVisible(true);
 	}
 
-	private static void makeRecipe(Recipe recipe, double amount, double pg, double vg) {
+	private static void makeRecipe(@NotNull Recipe recipe, double amount, double pg, double vg) {
 		tracker.usePg(calculateMlPgToAdd(recipe, amount, pg));
 		tracker.useVg(calculateMlVgToAdd(amount, vg));
 		tracker.useNicotine(calculateMlNicotineToAdd(amount));
@@ -625,11 +631,11 @@ public class App {
 		tracker.save();
 	}
 
-	private static double calculateMlFlavorToAdd(Flavor flavor, double percentToAdd, double amountToMake) {
+	private static double calculateMlFlavorToAdd(@NotNull Flavor flavor, double percentToAdd, double amountToMake) {
 		return (percentToAdd/100) * amountToMake * flavor.getMW();
 	}
 
-	private static double calculateMlPgToAdd(Recipe recipe, double amountToMake, double pgProportion) {
+	private static double calculateMlPgToAdd(@NotNull Recipe recipe, double amountToMake, double pgProportion) {
 		if (pgProportion == 0) {
 			return 0;
 		}
@@ -650,7 +656,7 @@ public class App {
 		return vgToAdd - (calculateMlNicotineToAdd(amountToMake) * (nicotineVg/100));
 	}
 
-	private static double sumFlavorAmounts(Recipe recipe, double amount) {
+	private static double sumFlavorAmounts(@NotNull Recipe recipe, double amount) {
 		double sum = 0.0;
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
 			sum += (entry.getValue()/100) * amount;

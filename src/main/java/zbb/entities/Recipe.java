@@ -6,6 +6,7 @@ import java.util.Map;
 
 /**
  * Created by zbb on 6/6/16.
+ *
  */
 public class Recipe implements Serializable{
 	private String name;
