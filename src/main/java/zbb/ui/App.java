@@ -42,17 +42,18 @@ public class App {
 	}
 
 	private static boolean init() {
-		tracker = new Tracker();
 		properties = new Properties();
 		try (FileInputStream fis = new FileInputStream("config.properties")) {
 			if (!fis.getFD().valid()) {
 				throw new IOException("Sorry, unable to find file: " + fis.getFD().toString());
 			}
 			properties.load(fis);
+			tracker = new Tracker(properties.getProperty("flavor.path"), properties.getProperty("recipe.path"));
 			tracker.calculateMWofNicotine(properties.getProperty("nicotine.mg"),
 					properties.getProperty("nicotine.pg"),
 					properties.getProperty("nicotine.vg"));
 		} catch (IOException e) {
+			tracker = new Tracker();
 			int response = JOptionPane.showConfirmDialog(frame,
 					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
 					"Unable to Locate Properties File", JOptionPane.YES_NO_OPTION);
@@ -406,7 +407,7 @@ public class App {
 		panel.removeAll();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		JLabel nicotineLabel = new JLabel("Nicotine");
+		JLabel nicotineLabel = new JLabel("Nicotine Settings");
 		panel.add(nicotineLabel);
 		JPanel nicotineSettings = new JPanel(new SpringLayout());
 
@@ -434,14 +435,32 @@ public class App {
 		panel.add(nicotineSettings);
 		panel.add(new JSeparator());
 
-		panel.add(new JLabel("Flavor"));
-		JPanel amountRemSettingPanel = new JPanel();
+		panel.add(new JLabel("Flavor Settings"));
+		JPanel flavorSettingPanel = new JPanel(new SpringLayout());
 		JLabel amountRemLabel = new JLabel("Amount remaining before adding to shopping list (ml):");
 		JTextField amountRemField = new JTextField(properties.getProperty("flavor.amtrem") != null ?
 			properties.getProperty("flavor.amtrem") : " ");
-		amountRemSettingPanel.add(amountRemLabel);
-		amountRemSettingPanel.add(amountRemField);
-		panel.add(amountRemSettingPanel);
+		flavorSettingPanel.add(amountRemLabel);
+		flavorSettingPanel.add(amountRemField);
+
+		JLabel pathLabel = new JLabel("Path to flavors folder:");
+		JTextField pathField = new JTextField(properties.getProperty("flavor.path") != null ?
+			properties.getProperty("flavor.path") : " ");
+		flavorSettingPanel.add(pathLabel);
+		flavorSettingPanel.add(pathField);
+		SpringUtilities.makeCompactGrid(flavorSettingPanel, 2, 2, 6, 6, 6, 6);
+		panel.add(flavorSettingPanel);
+		panel.add(new JSeparator());
+
+		JLabel recipe = new JLabel("Recipe Settings");
+		panel.add(recipe);
+		JPanel recipePanel = new JPanel(new SpringLayout());
+		JLabel recipePathLabel = new JLabel("Path to recipes folder:");
+		JTextField recipePathField = new JTextField(properties.getProperty("recipe.path"));
+		recipePanel.add(recipePathLabel);
+		recipePanel.add(recipePathField);
+		SpringUtilities.makeCompactGrid(recipePanel, 1, 2, 6, 6, 6, 6);
+		panel.add(recipePanel);
 
 		JPanel buttons = new JPanel();
 		JButton ok = new JButton("Ok");

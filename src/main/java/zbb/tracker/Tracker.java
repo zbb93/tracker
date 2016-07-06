@@ -13,9 +13,14 @@ import org.jetbrains.annotations.*;
  * This is where the magic happens! Keeps track of flavors and recipes etc etc.
  */
 public class Tracker {
+	/**
+	 * Valid paths must end with a trailing slash!
+	 */
+	private String pathToRecipesFolder;
+	private String pathToFlavorFolder;
 	private ArrayList<Flavor> flavors;
 	private ArrayList<Recipe> recipes;
-	//TODO: Ask user to input these values on first time run and persist these values to file.
+  //TODO: There needs to be a way to input these values.
 	private double vg;
 	private double pg;
 	private double nicotine;
@@ -24,7 +29,27 @@ public class Tracker {
 	public static final double MW_VG = 1.260;
 	public static final double MW_PG = 1.040;
 
+	/**
+	 * Constructor to use if config.properties is successfully located while application is initializing.
+	 * @param pathToFlavors path to flavors folder; should be obtained from config.properties
+	 * @param pathToRecipes path to recipes folder; should be obtained from config.properties
+	 */
+	public Tracker(String pathToFlavors, String pathToRecipes) {
+		pathToFlavorFolder = pathToFlavors;
+		pathToRecipesFolder = pathToRecipes;
+		loadFlavorsFromFile();
+		loadRecipesFromFile();
+		loadPgVgNicFromFile();
+	}
+
+	/**
+	 * Default constructor to use when config.properties file cannot be found.
+	 * Path to flavors set to: ./flavors/
+	 * Path to recipes set to: ./recipes/
+	 */
 	public Tracker() {
+		pathToFlavorFolder = "flavors/";
+		pathToRecipesFolder = "recipes/";
 		loadFlavorsFromFile();
 		loadRecipesFromFile();
 		loadPgVgNicFromFile();
@@ -97,7 +122,8 @@ public class Tracker {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		try {
-			String fileName = "flavors/" + flavor.getName() + ".xml";
+			//TODO: this probably should not be hardcoded.
+			String fileName = pathToFlavorFolder + flavor.getName() + ".xml";
 			fos = new FileOutputStream(fileName);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(flavor);
@@ -125,7 +151,7 @@ public class Tracker {
 		Flavor flavor = null;
 		try {
 			//TODO: this probably should not be hardcoded.
-			fis = new FileInputStream("flavors/" + fileName);
+			fis = new FileInputStream(pathToFlavorFolder + fileName);
 			ois = new ObjectInputStream(fis);
 			flavor = (Flavor) ois.readObject();
 		}
@@ -152,7 +178,7 @@ public class Tracker {
 
 		try {
 			//TODO: should not be hardcoded
-			String fileName = "recipes/" + recipe.getName() + ".xml";
+			String fileName = pathToRecipesFolder + recipe.getName() + ".xml";
 			fos = new FileOutputStream(fileName);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(recipe);
@@ -182,7 +208,7 @@ public class Tracker {
 		Recipe recipe = null;
 		try {
 			//TODO: this probably should not be hardcoded.
-			fis = new FileInputStream("recipes/" + fileName);
+			fis = new FileInputStream(pathToRecipesFolder + fileName);
 			ois = new ObjectInputStream(fis);
 			recipe = (Recipe) ois.readObject();
 		}
@@ -325,5 +351,13 @@ public class Tracker {
 			}
 		}
 		return usedIn;
+	}
+
+	public void setPathToRecipes(String path) {
+		pathToRecipesFolder = path;
+	}
+
+	public void setPathToFlavors(String path) {
+		pathToFlavorFolder = path;
 	}
 }
