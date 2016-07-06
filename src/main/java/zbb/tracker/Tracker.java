@@ -122,7 +122,6 @@ public class Tracker {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		try {
-			//TODO: this probably should not be hardcoded.
 			String fileName = pathToFlavorFolder + flavor.getName() + ".xml";
 			fos = new FileOutputStream(fileName);
 			oos = new ObjectOutputStream(fos);
@@ -150,7 +149,6 @@ public class Tracker {
 		ObjectInputStream ois = null;
 		Flavor flavor = null;
 		try {
-			//TODO: this probably should not be hardcoded.
 			fis = new FileInputStream(pathToFlavorFolder + fileName);
 			ois = new ObjectInputStream(fis);
 			flavor = (Flavor) ois.readObject();
@@ -177,7 +175,6 @@ public class Tracker {
 		ObjectOutputStream oos = null;
 
 		try {
-			//TODO: should not be hardcoded
 			String fileName = pathToRecipesFolder + recipe.getName() + ".xml";
 			fos = new FileOutputStream(fileName);
 			oos = new ObjectOutputStream(fos);
@@ -207,7 +204,6 @@ public class Tracker {
 		ObjectInputStream ois = null;
 		Recipe recipe = null;
 		try {
-			//TODO: this probably should not be hardcoded.
 			fis = new FileInputStream(pathToRecipesFolder + fileName);
 			ois = new ObjectInputStream(fis);
 			recipe = (Recipe) ois.readObject();

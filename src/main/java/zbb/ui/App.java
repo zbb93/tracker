@@ -469,6 +469,8 @@ public class App {
 			properties.setProperty("nicotine.pg", nicotinePgField.getText());
 			properties.setProperty("nicotine.vg", nicotineVgField.getText());
 			properties.setProperty("flavor.amtrem", amountRemField.getText());
+			properties.setProperty("flavor.path", pathField.getText());
+			properties.setProperty("recipe.path", recipePathField.getText());
 		});
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(a -> showMainMenu());
