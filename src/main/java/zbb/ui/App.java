@@ -283,7 +283,12 @@ public class App {
 					nameAndManf[0] = nameAndManf[0].trim();
 					nameAndManf[1] = nameAndManf[1].trim();
 					Flavor flavor = tracker.findFlavor(nameAndManf[1], nameAndManf[0]);
-					showIndividualFlavorView(flavor);
+					if (flavor != null) {
+						showIndividualFlavorView(flavor);
+					} else {
+						JOptionPane.showMessageDialog(flavorTable, "Unable to load information for flavor: " + name,
+								"Flavor Does Not Exist", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		});
@@ -302,7 +307,12 @@ public class App {
 				if (recipeTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
 					String name = (String) recipeTable.getValueAt(recipeTable.getSelectedRow(), 0);
 					Recipe recipe = tracker.findRecipe(name);
-					showIndividualRecipeView(recipe);
+					if (recipe != null) {
+						showIndividualRecipeView(recipe);
+					} else {
+						JOptionPane.showMessageDialog(recipeTable, "Unable to load information for recipe: " + name,
+								"Recipe Does Not Exist", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 		recipeTable.setAutoCreateRowSorter(true);
@@ -320,7 +330,12 @@ public class App {
 				if (recipeTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
 					String name = (String) recipeTable.getValueAt(recipeTable.getSelectedRow(), 0);
 					Recipe recipe = tracker.findRecipe(name);
-					showMakeRecipeView(recipe);
+					if (recipe != null) {
+						showMakeRecipeView(recipe);
+					} else {
+						JOptionPane.showMessageDialog(recipeTable, "Unable to load information for flavor: " + name,
+								"Flavor Does Not Exist", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 		recipeTable.setAutoCreateRowSorter(true);
@@ -371,7 +386,7 @@ public class App {
 		List<Recipe> recipes = tracker.getRecipesThatUse(flavor);
 		for (Recipe recipe : recipes) {
 			JButton recipeName = new JButton(recipe.getName());
-			recipeName.addActionListener(a -> showIndividualRecipeView(tracker.findRecipe(recipeName.getText())));
+			recipeName.addActionListener(a -> showIndividualRecipeView(recipe));
 			recipeName.setBorderPainted(false);
 			recipeName.setBackground(Color.WHITE);
 			recipeName.setFocusPainted(false);
@@ -677,11 +692,18 @@ public class App {
 			if (shoppingListTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
 				String name = (String) shoppingListTable.getValueAt(shoppingListTable.getSelectedRow(), 0);
 				String[] nameAndManf = name.split("\\(");
-				nameAndManf[1] = nameAndManf[1].replace(")", "");
-				nameAndManf[0] = nameAndManf[0].trim();
-				nameAndManf[1] = nameAndManf[1].trim();
-				Flavor flavor = tracker.findFlavor(nameAndManf[1], nameAndManf[0]);
-				showIndividualFlavorView(flavor);
+				if (nameAndManf.length == 2) {
+					nameAndManf[1] = nameAndManf[1].replace(")", "");
+					nameAndManf[0] = nameAndManf[0].trim();
+					nameAndManf[1] = nameAndManf[1].trim();
+					Flavor flavor = tracker.findFlavor(nameAndManf[1], nameAndManf[0]);
+					if (flavor != null) {
+						showIndividualFlavorView(flavor);
+					} else {
+						JOptionPane.showMessageDialog(shoppingListTable, "Unable to load information for flavor: " + name,
+								"Flavor Does Not Exist", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 			}
 		});
 		JScrollPane tablePane = new JScrollPane(shoppingListTable);
