@@ -356,4 +356,58 @@ public class Tracker {
 	public void setPathToFlavors(String path) {
 		pathToFlavorFolder = path;
 	}
+
+	public void writeListToFile(String name, List<Flavor> shoppingList) {
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+		LinkedList<Flavor> list = new LinkedList<>(shoppingList);
+		try {
+			String fileName = "lists/" + name + ".xml";
+			fos = new FileOutputStream(fileName);
+			oos = new ObjectOutputStream(fos);
+			oos.writeObject(list);
+		}
+		catch(IOException exc) {
+			exc.printStackTrace();
+		} finally {
+			try {
+				if (oos != null) {
+					oos.close();
+				}
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (NullPointerException|IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@NotNull
+	public List<Flavor> readListFromFile(String name) {
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		List<Flavor> shoppingList = new LinkedList<>();
+		try {
+			String fileName = "lists/" + name + ".xml";
+			fis = new FileInputStream(fileName);
+			ois = new ObjectInputStream(fis);
+			shoppingList = (List<Flavor>) ois.readObject();
+		}
+		catch(ClassNotFoundException | IOException exc) {
+			exc.printStackTrace();
+		} finally {
+			try {
+				if (ois != null) {
+					ois.close();
+				}
+				if (fis != null) {
+					fis.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return shoppingList;
+	}
 }

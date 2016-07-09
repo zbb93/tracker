@@ -515,6 +515,11 @@ public class App {
 		generateShoppingList.addActionListener(a -> buildAndShowAutoShoppingList());
 		buttons.add(generateShoppingList);
 
+		JButton viewExistingList = new JButton("View Existing List");
+		viewExistingList.addActionListener(a -> selectExistingListView());
+		buttons.add(viewExistingList);
+
+
 		frame.add(buttons);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
@@ -701,12 +706,58 @@ public class App {
 	}
 
 	private static void buildAndShowAutoShoppingList() {
-		//TODO: An option to save the list should be added to this window (list saving functionality must be implemented first)
 		double amount = Double.parseDouble(properties.getProperty("flavor.amtrem") != null ?
 			properties.getProperty("flavor.amtrem") : promptUserForAmtRem());
 		List<Flavor> shoppingList = tracker.buildAutoShoppingList(amount);
+		showExistingListView(shoppingList);
+	}
+
+	private static String promptUserForAmtRem() {
+		return JOptionPane.showInputDialog(frame, "Add flavors below how many ml's to shopping list?");
+	}
+
+	private static void selectExistingListView() {
+		JFrame listFrame = new JFrame("Select a list to open");
+		listFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		File listDir = new File("lists/");
+		File[] lists = listDir.listFiles();
+		LinkedList<String> listNames = new LinkedList<>();
+		if (lists != null) {
+			for (File file : lists) {
+				listNames.add(file.getName().replaceAll(".xml", ""));
+			}
+		}
+		JTable listTable = new JTable(new ListTableModel(listNames));
+		listTable.getSelectionModel().addListSelectionListener(a -> {
+			if (listTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
+				String name = (String) listTable.getValueAt(listTable.getSelectedRow(), 0);
+				List<Flavor> flavors = tracker.readListFromFile(name);
+				showExistingListView(flavors);
+				listFrame.dispose();
+			}
+		});
+		listTable.setAutoCreateRowSorter(true);
+		JScrollPane tablePane = new JScrollPane(listTable);
+		tablePane.setPreferredSize(new Dimension(200, 200));
+		listFrame.add(tablePane);
+		listFrame.pack();
+		listFrame.setLocationRelativeTo(frame);
+		listFrame.setVisible(true);
+	}
+
+	private static void showExistingListView(List<Flavor> shoppingList) {
 		JFrame shoppingListFrame = new JFrame("Shopping List");
 		shoppingListFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+		JMenuBar menuBar = new JMenuBar();
+		JMenu file = new JMenu("File");
+		JMenuItem save = new JMenuItem("Save");
+		save.addActionListener(a -> tracker.writeListToFile(JOptionPane.showInputDialog(shoppingListFrame, "Name your list"),
+				shoppingList));
+		file.add(save);
+		menuBar.add(file);
+		shoppingListFrame.setJMenuBar(menuBar);
+
 		JPanel shoppingListPanel = new JPanel();
 		JTable shoppingListTable = new JTable(new FlavorTableModel(shoppingList));
 		shoppingListTable.getSelectionModel().addListSelectionListener(a -> {
@@ -727,6 +778,7 @@ public class App {
 				}
 			}
 		});
+		shoppingListTable.setAutoCreateRowSorter(true);
 		JScrollPane tablePane = new JScrollPane(shoppingListTable);
 		tablePane.setPreferredSize(new Dimension(700, 200));
 		shoppingListPanel.add(tablePane);
@@ -734,9 +786,5 @@ public class App {
 		shoppingListFrame.pack();
 		shoppingListFrame.setLocationRelativeTo(frame);
 		shoppingListFrame.setVisible(true);
-	}
-
-	private static String promptUserForAmtRem() {
-		return JOptionPane.showInputDialog(frame, "Add flavors below how many ml's to shopping list?");
 	}
 }
