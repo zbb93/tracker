@@ -1,11 +1,9 @@
 package zbb.entities;
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
+import java.io.*;
+import java.util.*;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
+import org.jetbrains.annotations.*;
 
 /**
  * Created by zbb on 6/6/16.
@@ -16,15 +14,21 @@ public class Flavor implements Serializable{
 	private String manufacturer;
 	private String name;
 	private double amountRemaining;
+	private List<String> categories;
 	private final double MW = 1.0;
 
 	public Flavor(@NotNull String manf, @NotNull String name) {
-		this(manf, name, -1);
+		this(manf, name, null, -1);
 	}
 
-	public Flavor(@NotNull String manf, @NotNull String name, double amount) {
+	public Flavor(@NotNull String manf, @NotNull String name, @Nullable List<String> categories, double amount) {
 		this.manufacturer = manf;
 		this.name = name;
+		if (categories != null) {
+			this.categories = categories;
+		} else {
+			this.categories = new LinkedList<>();
+		}
 		if (amount > 0) {
 			this.amountRemaining = amount;
 		}
@@ -72,4 +76,7 @@ public class Flavor implements Serializable{
 		return this.MW;
 	}
 
+	public List<String> getCategories() {
+		return categories;
+	}
 }

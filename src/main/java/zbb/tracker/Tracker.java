@@ -331,10 +331,12 @@ public class Tracker {
 		return mwNicotineSolution;
 	}
 
+	@NotNull
 	public List<Flavor> buildAutoShoppingList(double amount) {
 		return flavors.stream().filter(flavor -> flavor.getAmountRemaining() < amount).collect(Collectors.toList());
 	}
 
+	@NotNull
 	public List<Recipe> getRecipesThatUse(@NotNull Flavor flavor) {
 		List<Recipe> usedIn = new LinkedList<>();
 		for (Recipe recipe : recipes) {
@@ -392,7 +394,8 @@ public class Tracker {
 			String fileName = "lists/" + name + ".xml";
 			fis = new FileInputStream(fileName);
 			ois = new ObjectInputStream(fis);
-			shoppingList = (List<Flavor>) ois.readObject();
+			List<?> tempList = (List<?>) ois.readObject();
+			shoppingList = tempList.stream().filter(f -> f instanceof Flavor).map(Flavor.class::cast).collect(Collectors.toList());
 		}
 		catch(ClassNotFoundException | IOException exc) {
 			exc.printStackTrace();

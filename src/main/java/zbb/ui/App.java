@@ -25,6 +25,7 @@ import java.text.*;
 import java.util.*;
 import java.io.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.*;
 
@@ -245,6 +246,11 @@ public class App {
 		newFlavorPanel.add(manufacturer);
 		newFlavorPanel.add(manfField);
 
+		JLabel categories = new JLabel("Categories (comma separated)");
+		JTextField categoriesField = new JTextField();
+		newFlavorPanel.add(categories);
+		newFlavorPanel.add(categoriesField);
+
 		JLabel amountRemaining = new JLabel("Amount Remaining");
 		JTextField amtRemField = new JTextField(3);
 		amountRemaining.setLabelFor(amtRemField);
@@ -252,7 +258,8 @@ public class App {
 		newFlavorPanel.add(amtRemField);
 
 		JButton ok = new JButton("Ok");
-		ok.addActionListener(a -> addFlavor(nameField.getText(), manfField.getText(), Integer.parseInt(amtRemField.getText())));
+		ok.addActionListener(a -> addFlavor(nameField.getText(), manfField.getText(),
+				Arrays.asList(categoriesField.getText().split(",")), Double.parseDouble(amtRemField.getText())));
 		ok.addActionListener(a -> newFlavorFrame.dispose());
 		newFlavorPanel.add(ok);
 
@@ -260,7 +267,7 @@ public class App {
 		cancel.addActionListener(a -> newFlavorFrame.dispose());
 		newFlavorPanel.add(cancel);
 
-		SpringUtilities.makeCompactGrid(newFlavorPanel, 4, 2, 6, 6, 6, 6);
+		SpringUtilities.makeCompactGrid(newFlavorPanel, 5, 2, 6, 6, 6, 6);
 		newFlavorFrame.add(newFlavorPanel);
 		newFlavorFrame.pack();
 		newFlavorFrame.setLocationRelativeTo(frame);
@@ -271,9 +278,9 @@ public class App {
 		panel.removeAll();
 		List<Flavor> flavors = tracker.getFlavors();
 		//Add dummy flavors for pg/vg/nicotine.
-		flavors.add(new Flavor("", "Propylene Glycol", tracker.getPg()));
-		flavors.add(new Flavor("", "Vegetable Glycerin", tracker.getVg()));
-		flavors.add(new Flavor("", "Nicotine", tracker.getNicotine()));
+		flavors.add(new Flavor("", "Propylene Glycol", null, tracker.getPg()));
+		flavors.add(new Flavor("", "Vegetable Glycerin", null, tracker.getVg()));
+		flavors.add(new Flavor("", "Nicotine", null, tracker.getNicotine()));
 		JTable flavorTable = new JTable(new FlavorTableModel(flavors));
 		flavorTable.getSelectionModel().addListSelectionListener(a -> {
 			if (flavorTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
@@ -347,8 +354,8 @@ public class App {
 		frame.setLocationRelativeTo(null);
 	}
 
-	private static void addFlavor(@NotNull String name, @NotNull String manf, int amtRem) {
-		Flavor flavor = new Flavor(manf, name, amtRem);
+	private static void addFlavor(@NotNull String name, @NotNull String manf, @Nullable List<String> categories, double amtRem) {
+		Flavor flavor = new Flavor(manf, name, categories, amtRem);
 		tracker.addFlavor(flavor);
 	}
 
@@ -471,6 +478,10 @@ public class App {
 			properties.setProperty("flavor.amtrem", amountRemField.getText());
 			properties.setProperty("flavor.path", pathField.getText());
 			properties.setProperty("recipe.path", recipePathField.getText());
+
+			tracker.setPathToFlavors(pathField.getText());
+			tracker.setPathToRecipes(recipePathField.getText());
+			tracker.calculateMWofNicotine(nicotineStrengthField.getText(), nicotinePgField.getText(), nicotineVgField.getText());
 		});
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(a -> showMainMenu());
@@ -515,6 +526,12 @@ public class App {
 		generateShoppingList.addActionListener(a -> buildAndShowAutoShoppingList());
 		buttons.add(generateShoppingList);
 
+		//TODO: Needs a new name
+		JButton buildYourOwn = new JButton("Create new smart list");
+		buildYourOwn.addActionListener(a -> createNewSmartList());
+		buttons.add(buildYourOwn);
+
+
 		JButton viewExistingList = new JButton("View Existing List");
 		viewExistingList.addActionListener(a -> selectExistingListView());
 		buttons.add(viewExistingList);
@@ -523,6 +540,46 @@ public class App {
 		frame.add(buttons);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
+	}
+
+	private static void createNewSmartList() {
+		JFrame newSmartListFrame = new JFrame("Create a New Smart List");
+		newSmartListFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		JPanel contentPanel = new JPanel();
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
+		JLabel instructions = new JLabel("Values should be entered in comma separated lists!");
+		contentPanel.add(instructions);
+		contentPanel.add(new JSeparator());
+
+		JPanel filterPanel = new JPanel(new SpringLayout());
+
+		JLabel manfLabel = new JLabel("Manufacturers");
+		JTextField manfField = new JTextField();
+		filterPanel.add(manfLabel);
+		filterPanel.add(manfField);
+
+		JLabel categoryLabel = new JLabel("Categories");
+		JTextField categoryField = new JTextField();
+		filterPanel.add(categoryLabel);
+		filterPanel.add(categoryField);
+		SpringUtilities.makeCompactGrid(filterPanel, 2, 2, 6, 6, 6, 6);
+		contentPanel.add(filterPanel);
+
+		JPanel buttonPanel = new JPanel();
+		JButton ok = new JButton("Ok");
+		ok.addActionListener(a -> {
+			buildListWithFilters(manfField.getText(), categoryField.getText());
+			newSmartListFrame.dispose();
+		});
+		JButton cancel = new JButton("Cancel");
+		buttonPanel.add(ok);
+		buttonPanel.add(cancel);
+		contentPanel.add(buttonPanel);
+		newSmartListFrame.add(contentPanel);
+		newSmartListFrame.pack();
+		newSmartListFrame.setLocationRelativeTo(frame);
+		newSmartListFrame.setVisible(true);
 	}
 
 	private static void addRecipe(String name, String description, List<JTextField> textFields) {
@@ -786,5 +843,24 @@ public class App {
 		shoppingListFrame.pack();
 		shoppingListFrame.setLocationRelativeTo(frame);
 		shoppingListFrame.setVisible(true);
+	}
+
+	private static void buildListWithFilters(String manfConstraints, String categoryConstraints) {
+		List<String> manfs = new LinkedList<>(Arrays.asList(manfConstraints.split(",")));
+		List<String> categories = new LinkedList<>(Arrays.asList(categoryConstraints.split(",")));
+		List<Flavor> flavors = tracker.getFlavors();
+		List<Flavor> shoppingList = flavors.stream().filter(flavor -> manfs.contains(flavor.getManufacturer()) &&
+			checkCategories(flavor, categories)).collect(Collectors.toList());
+		showExistingListView(shoppingList);
+	}
+
+	private static boolean checkCategories(Flavor flavor, List<String> categories) {
+		List<String> flavorCategories = flavor.getCategories();
+		for (String category : categories) {
+			if (flavorCategories.contains(category)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
