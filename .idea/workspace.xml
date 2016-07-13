@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list id="b66d16ab-4cc6-4023-a340-0ff8497f94ba" name="Default" comment="" />
-    <list default="true" id="e5271018-2c31-4951-a3fa-a8fcff280fd2" name="Save/Read Lists From Files" comment="Save/Read Lists From Files&#10;Added methods to tracker to read/write list of flavors that comprise a list.&#10;Created table model for list selection.&#10;Added buttons/menus to App to use new functionality.">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/zbb/ui/ListTableModel.java" />
+    <list default="true" id="e5271018-2c31-4951-a3fa-a8fcff280fd2" name="Save/Read Lists From Files" comment="Filtered Shopping Lists&#10;Fixed bug where a list with filters would always be empty if one constraint were to not be included by user.">
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/zbb/tracker/Tracker.java" afterPath="$PROJECT_DIR$/src/main/java/zbb/tracker/Tracker.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/zbb/ui/App.java" afterPath="$PROJECT_DIR$/src/main/java/zbb/ui/App.java" />
     </list>
     <ignored path="elqTracker.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="200">
-      <file leaf-file-name="App.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="App.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/App.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1001">
-              <caret line="707" column="54" selection-start-line="707" selection-start-column="54" selection-end-line="707" selection-end-column="54" />
+            <state relative-caret-position="216">
+              <caret line="38" column="43" selection-start-line="38" selection-start-column="43" selection-end-line="38" selection-end-column="43" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -44,32 +41,57 @@
       <file leaf-file-name="ListTableModel.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/ListTableModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
+            <state relative-caret-position="378">
               <caret line="45" column="26" selection-start-line="45" selection-start-column="26" selection-end-line="45" selection-end-column="26" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#1052#1053#0" expanded="true" />
-                <element signature="e#1081#1082#0" expanded="true" />
-                <element signature="e#1120#1121#0" expanded="true" />
-                <element signature="e#1146#1147#0" expanded="true" />
-                <element signature="e#1189#1190#0" expanded="true" />
-                <element signature="e#1217#1218#0" expanded="true" />
-                <element signature="e#1275#1276#0" expanded="true" />
-                <element signature="e#1303#1304#0" expanded="true" />
-                <element signature="e#1353#1354#0" expanded="true" />
-                <element signature="e#1377#1378#0" expanded="true" />
+                <element signature="e#0#1382#0" expanded="false" />
+                <element signature="e#1052#1053#0" expanded="false" />
+                <element signature="e#1081#1082#0" expanded="false" />
+                <element signature="e#1120#1121#0" expanded="false" />
+                <element signature="e#1146#1147#0" expanded="false" />
+                <element signature="e#1189#1190#0" expanded="false" />
+                <element signature="e#1217#1218#0" expanded="false" />
+                <element signature="e#1353#1354#0" expanded="false" />
+                <element signature="e#1377#1378#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Tracker.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Tracker.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/zbb/tracker/Tracker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-47">
-              <caret line="394" column="18" selection-start-line="394" selection-start-column="18" selection-end-line="394" selection-end-column="18" />
+            <state relative-caret-position="6534">
+              <caret line="397" column="47" selection-start-line="397" selection-start-column="47" selection-end-line="397" selection-end-column="47" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#5565#5566#0" expanded="false" />
+                <element signature="e#5586#5587#0" expanded="false" />
+                <element signature="e#6048#6049#0" expanded="false" />
+                <element signature="e#6069#6070#0" expanded="false" />
+                <element signature="e#6110#6111#0" expanded="false" />
+                <element signature="e#6133#6134#0" expanded="false" />
+                <element signature="e#6175#6176#0" expanded="false" />
+                <element signature="e#6199#6200#0" expanded="false" />
+                <element signature="e#6225#6226#0" expanded="false" />
+                <element signature="e#6241#6242#0" expanded="false" />
+                <element signature="e#6282#6283#0" expanded="false" />
+                <element signature="e#6305#6306#0" expanded="false" />
+                <element signature="e#6347#6348#0" expanded="false" />
+                <element signature="e#6371#6372#0" expanded="false" />
+                <element signature="e#6397#6398#0" expanded="false" />
+                <element signature="e#6413#6414#0" expanded="false" />
+                <element signature="e#6460#6461#0" expanded="false" />
+                <element signature="e#6489#6490#0" expanded="false" />
+                <element signature="e#6537#6538#0" expanded="false" />
+                <element signature="e#6567#6568#0" expanded="false" />
+                <element signature="e#6599#6600#0" expanded="false" />
+                <element signature="e#6621#6622#0" expanded="false" />
+                <element signature="e#7828#7829#0" expanded="false" />
+                <element signature="e#7860#7861#0" expanded="false" />
+                <element signature="e#8463#8464#0" expanded="false" />
+                <element signature="e#8496#8497#0" expanded="false" />
+                <element signature="e#8542#8543#0" expanded="false" />
+                <element signature="e#8574#8575#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -78,9 +100,20 @@
       <file leaf-file-name="AllRecipesTableModel.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/AllRecipesTableModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
+            <state relative-caret-position="648">
               <caret line="61" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-              <folding />
+              <folding>
+                <element signature="e#0#1553#0" expanded="false" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#1082#1083#0" expanded="false" />
+                <element signature="e#1111#1112#0" expanded="false" />
+                <element signature="e#1150#1151#0" expanded="false" />
+                <element signature="e#1178#1179#0" expanded="false" />
+                <element signature="e#1221#1222#0" expanded="false" />
+                <element signature="e#1249#1250#0" expanded="false" />
+                <element signature="e#1525#1526#0" expanded="false" />
+                <element signature="e#1549#1550#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -88,9 +121,26 @@
       <file leaf-file-name="Flavor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/zbb/entities/Flavor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="325">
-              <caret line="27" column="21" selection-start-line="27" selection-start-column="21" selection-end-line="27" selection-end-column="21" />
-              <folding />
+            <state relative-caret-position="432">
+              <caret line="29" column="43" selection-start-line="29" selection-start-column="43" selection-end-line="29" selection-end-column="43" />
+              <folding>
+                <element signature="e#434#435#0" expanded="false" />
+                <element signature="e#467#468#0" expanded="false" />
+                <element signature="e#841#842#0" expanded="false" />
+                <element signature="e#867#868#0" expanded="false" />
+                <element signature="e#895#896#0" expanded="false" />
+                <element signature="e#913#914#0" expanded="false" />
+                <element signature="e#952#953#0" expanded="false" />
+                <element signature="e#981#982#0" expanded="false" />
+                <element signature="e#1020#1021#0" expanded="false" />
+                <element signature="e#1056#1057#0" expanded="false" />
+                <element signature="e#1096#1097#0" expanded="false" />
+                <element signature="e#1135#1136#0" expanded="false" />
+                <element signature="e#1466#1467#0" expanded="false" />
+                <element signature="e#1528#1529#0" expanded="false" />
+                <element signature="e#1554#1555#0" expanded="false" />
+                <element signature="e#1575#1576#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -121,7 +171,25 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="108">
               <caret line="8" column="2" selection-start-line="8" selection-start-column="2" selection-end-line="8" selection-end-column="2" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#570#571#0" expanded="false" />
+                <element signature="e#588#589#0" expanded="false" />
+                <element signature="e#638#639#0" expanded="false" />
+                <element signature="e#661#662#0" expanded="false" />
+                <element signature="e#705#706#0" expanded="false" />
+                <element signature="e#725#726#0" expanded="false" />
+                <element signature="e#792#793#0" expanded="false" />
+                <element signature="e#819#820#0" expanded="false" />
+                <element signature="e#868#869#0" expanded="false" />
+                <element signature="e#900#901#0" expanded="false" />
+                <element signature="e#963#964#0" expanded="false" />
+                <element signature="e#996#997#0" expanded="false" />
+                <element signature="e#1403#1404#0" expanded="false" />
+                <element signature="e#1462#1463#0" expanded="false" />
+                <element signature="e#1496#1497#0" expanded="false" />
+                <element signature="e#1521#1522#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -137,6 +205,11 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -162,11 +235,11 @@
         <option value="$PROJECT_DIR$/src/main/java/zbb/entities/Recipe.java" />
         <option value="$PROJECT_DIR$/src/main/java/zbb/entities/Liquid.java" />
         <option value="$PROJECT_DIR$/src/main/java/zbb/ui/FlavorTableModel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/zbb/entities/Flavor.java" />
         <option value="$PROJECT_DIR$/config.properties" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/src/main/java/zbb/tracker/Tracker.java" />
         <option value="$PROJECT_DIR$/src/main/java/zbb/ui/ListTableModel.java" />
+        <option value="$PROJECT_DIR$/src/main/java/zbb/tracker/Tracker.java" />
+        <option value="$PROJECT_DIR$/src/main/java/zbb/entities/Flavor.java" />
         <option value="$PROJECT_DIR$/src/main/java/zbb/ui/App.java" />
       </list>
     </option>
@@ -211,15 +284,96 @@
             <id />
           </State>
           <State>
+            <id>Abstraction issuesJava</id>
+          </State>
+          <State>
+            <id>Android Lint</id>
+          </State>
+          <State>
+            <id>Class structureJava</id>
+          </State>
+          <State>
+            <id>Code maturity issuesJava</id>
+          </State>
+          <State>
+            <id>Code style issuesJava</id>
+          </State>
+          <State>
+            <id>Concurrency annotation issuesJava</id>
+          </State>
+          <State>
+            <id>Data flow issuesJava</id>
+          </State>
+          <State>
+            <id>Declaration redundancyJava</id>
+          </State>
+          <State>
+            <id>Encapsulation issuesJava</id>
+          </State>
+          <State>
             <id>General</id>
           </State>
           <State>
-            <id>XPath</id>
+            <id>GeneralJava</id>
+          </State>
+          <State>
+            <id>Initialization issuesJava</id>
+          </State>
+          <State>
+            <id>Internationalization issuesJava</id>
+          </State>
+          <State>
+            <id>JUnit issuesJava</id>
+          </State>
+          <State>
+            <id>Java</id>
+          </State>
+          <State>
+            <id>Java language level issuesJava</id>
+          </State>
+          <State>
+            <id>Java language level migration aidsJava</id>
+          </State>
+          <State>
+            <id>JavaFX</id>
+          </State>
+          <State>
+            <id>Javadoc issuesJava</id>
+          </State>
+          <State>
+            <id>Kotlin</id>
+          </State>
+          <State>
+            <id>Language Injection</id>
+          </State>
+          <State>
+            <id>Logging issuesJava</id>
+          </State>
+          <State>
+            <id>Naming conventionsJava</id>
+          </State>
+          <State>
+            <id>Pattern Validation</id>
+          </State>
+          <State>
+            <id>Plugin DevKit</id>
+          </State>
+          <State>
+            <id>Probable bugsJava</id>
+          </State>
+          <State>
+            <id>Properties FilesJava</id>
+          </State>
+          <State>
+            <id>Serialization issuesJava</id>
+          </State>
+          <State>
+            <id>TestNGJava</id>
           </State>
         </expanded-state>
         <selected-state>
           <State>
-            <id>SSBasedInspection</id>
+            <id>AnnotationClass</id>
           </State>
         </selected-state>
       </profile-state>
@@ -752,7 +906,28 @@
       <option name="project" value="LOCAL" />
       <updated>1467848539589</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Save/Read Lists From Files&#10;Added methods to tracker to read/write list of flavors that comprise a list.&#10;Created table model for list selection.&#10;Added buttons/menus to App to use new functionality.">
+      <created>1468085427866</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1468085427866</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Filtered Shopping Lists&#10;Added category property to Flavor class.&#10;Added functionality that allows users to create shopping lists with filters based on manufacturer and category.">
+      <created>1468126244445</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1468126244445</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Filtered Shopping Lists&#10;Fixed bug where a list with filters would always be empty if one constraint were to not be included by user.">
+      <created>1468450712103</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1468450712103</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -802,7 +977,7 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294509" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3294509" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294509" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -855,11 +1030,13 @@
     <MESSAGE value="Removed project files from git.&#10;Added properties to store the path to the flavor/recipe folders. Flavor/recipe files are now located using this property instead of a hardcoded string." />
     <MESSAGE value="Added properties to store the path to the flavor/recipe folders. &#10;Paths edited in the preferences view are now persisted." />
     <MESSAGE value="Save/Read Lists From Files&#10;Added methods to tracker to read/write list of flavors that comprise a list.&#10;Created table model for list selection.&#10;Added buttons/menus to App to use new functionality." />
-    <option name="LAST_COMMIT_MESSAGE" value="Save/Read Lists From Files&#10;Added methods to tracker to read/write list of flavors that comprise a list.&#10;Created table model for list selection.&#10;Added buttons/menus to App to use new functionality." />
+    <MESSAGE value="Filtered Shopping Lists&#10;Added category property to Flavor class.&#10;Added functionality that allows users to create shopping lists with filters based on manufacturer and category." />
+    <MESSAGE value="Filtered Shopping Lists&#10;Fixed bug where a list with filters would always be empty if one constraint were to not be included by user." />
+    <option name="LAST_COMMIT_MESSAGE" value="Filtered Shopping Lists&#10;Fixed bug where a list with filters would always be empty if one constraint were to not be included by user." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="31" />
+      <option name="time" value="32" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1133,7 +1310,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="17" column="40" selection-start-line="17" selection-start-column="40" selection-end-line="17" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1141,15 +1317,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/zbb/entities/Flavor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="27" column="21" selection-start-line="27" selection-start-column="21" selection-end-line="27" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1157,52 +1324,131 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="8" column="2" selection-start-line="8" selection-start-column="2" selection-end-line="8" selection-end-column="2" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#570#571#0" expanded="false" />
+            <element signature="e#588#589#0" expanded="false" />
+            <element signature="e#638#639#0" expanded="false" />
+            <element signature="e#661#662#0" expanded="false" />
+            <element signature="e#705#706#0" expanded="false" />
+            <element signature="e#725#726#0" expanded="false" />
+            <element signature="e#792#793#0" expanded="false" />
+            <element signature="e#819#820#0" expanded="false" />
+            <element signature="e#868#869#0" expanded="false" />
+            <element signature="e#900#901#0" expanded="false" />
+            <element signature="e#963#964#0" expanded="false" />
+            <element signature="e#996#997#0" expanded="false" />
+            <element signature="e#1403#1404#0" expanded="false" />
+            <element signature="e#1462#1463#0" expanded="false" />
+            <element signature="e#1496#1497#0" expanded="false" />
+            <element signature="e#1521#1522#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/AllRecipesTableModel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
+        <state relative-caret-position="648">
           <caret line="61" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/ListTableModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="45" column="26" selection-start-line="45" selection-start-column="26" selection-end-line="45" selection-end-column="26" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1052#1053#0" expanded="true" />
-            <element signature="e#1081#1082#0" expanded="true" />
-            <element signature="e#1120#1121#0" expanded="true" />
-            <element signature="e#1146#1147#0" expanded="true" />
-            <element signature="e#1189#1190#0" expanded="true" />
-            <element signature="e#1217#1218#0" expanded="true" />
-            <element signature="e#1275#1276#0" expanded="true" />
-            <element signature="e#1303#1304#0" expanded="true" />
-            <element signature="e#1353#1354#0" expanded="true" />
-            <element signature="e#1377#1378#0" expanded="true" />
+            <element signature="e#0#1553#0" expanded="false" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#1082#1083#0" expanded="false" />
+            <element signature="e#1111#1112#0" expanded="false" />
+            <element signature="e#1150#1151#0" expanded="false" />
+            <element signature="e#1178#1179#0" expanded="false" />
+            <element signature="e#1221#1222#0" expanded="false" />
+            <element signature="e#1249#1250#0" expanded="false" />
+            <element signature="e#1525#1526#0" expanded="false" />
+            <element signature="e#1549#1550#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/App.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/zbb/entities/Flavor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1001">
-          <caret line="707" column="54" selection-start-line="707" selection-start-column="54" selection-end-line="707" selection-end-column="54" />
+        <state relative-caret-position="432">
+          <caret line="29" column="43" selection-start-line="29" selection-start-column="43" selection-end-line="29" selection-end-column="43" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#434#435#0" expanded="false" />
+            <element signature="e#467#468#0" expanded="false" />
+            <element signature="e#841#842#0" expanded="false" />
+            <element signature="e#867#868#0" expanded="false" />
+            <element signature="e#895#896#0" expanded="false" />
+            <element signature="e#913#914#0" expanded="false" />
+            <element signature="e#952#953#0" expanded="false" />
+            <element signature="e#981#982#0" expanded="false" />
+            <element signature="e#1020#1021#0" expanded="false" />
+            <element signature="e#1056#1057#0" expanded="false" />
+            <element signature="e#1096#1097#0" expanded="false" />
+            <element signature="e#1135#1136#0" expanded="false" />
+            <element signature="e#1466#1467#0" expanded="false" />
+            <element signature="e#1528#1529#0" expanded="false" />
+            <element signature="e#1554#1555#0" expanded="false" />
+            <element signature="e#1575#1576#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/zbb/tracker/Tracker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-47">
-          <caret line="394" column="18" selection-start-line="394" selection-start-column="18" selection-end-line="394" selection-end-column="18" />
+        <state relative-caret-position="6534">
+          <caret line="397" column="47" selection-start-line="397" selection-start-column="47" selection-end-line="397" selection-end-column="47" />
+          <folding>
+            <element signature="e#5565#5566#0" expanded="false" />
+            <element signature="e#5586#5587#0" expanded="false" />
+            <element signature="e#6048#6049#0" expanded="false" />
+            <element signature="e#6069#6070#0" expanded="false" />
+            <element signature="e#6110#6111#0" expanded="false" />
+            <element signature="e#6133#6134#0" expanded="false" />
+            <element signature="e#6175#6176#0" expanded="false" />
+            <element signature="e#6199#6200#0" expanded="false" />
+            <element signature="e#6225#6226#0" expanded="false" />
+            <element signature="e#6241#6242#0" expanded="false" />
+            <element signature="e#6282#6283#0" expanded="false" />
+            <element signature="e#6305#6306#0" expanded="false" />
+            <element signature="e#6347#6348#0" expanded="false" />
+            <element signature="e#6371#6372#0" expanded="false" />
+            <element signature="e#6397#6398#0" expanded="false" />
+            <element signature="e#6413#6414#0" expanded="false" />
+            <element signature="e#6460#6461#0" expanded="false" />
+            <element signature="e#6489#6490#0" expanded="false" />
+            <element signature="e#6537#6538#0" expanded="false" />
+            <element signature="e#6567#6568#0" expanded="false" />
+            <element signature="e#6599#6600#0" expanded="false" />
+            <element signature="e#6621#6622#0" expanded="false" />
+            <element signature="e#7828#7829#0" expanded="false" />
+            <element signature="e#7860#7861#0" expanded="false" />
+            <element signature="e#8463#8464#0" expanded="false" />
+            <element signature="e#8496#8497#0" expanded="false" />
+            <element signature="e#8542#8543#0" expanded="false" />
+            <element signature="e#8574#8575#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/ListTableModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="45" column="26" selection-start-line="45" selection-start-column="26" selection-end-line="45" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#1382#0" expanded="false" />
+            <element signature="e#1052#1053#0" expanded="false" />
+            <element signature="e#1081#1082#0" expanded="false" />
+            <element signature="e#1120#1121#0" expanded="false" />
+            <element signature="e#1146#1147#0" expanded="false" />
+            <element signature="e#1189#1190#0" expanded="false" />
+            <element signature="e#1217#1218#0" expanded="false" />
+            <element signature="e#1353#1354#0" expanded="false" />
+            <element signature="e#1377#1378#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/zbb/ui/App.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="38" column="43" selection-start-line="38" selection-start-column="43" selection-end-line="38" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
