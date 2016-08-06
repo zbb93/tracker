@@ -29,7 +29,12 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.*;
 
-public class App {
+class App {
+
+	/**
+	 * TODO: display notification to user when amtRem of flavors used in recipes drops below
+	 * threshold set in preferences.
+	 */
 
 	private static Tracker tracker;
 	private static JFrame frame;
@@ -310,7 +315,7 @@ public class App {
 
 	private static void showExistingRecipesView() {
 		panel.removeAll();
-		JTable recipeTable = new JTable(new AllRecipesTableModel(tracker.getRecipes()));
+		JTable recipeTable = new JTable(new AllRecipesTableModel(tracker.getRecipes(), tracker));
 		recipeTable.getSelectionModel().addListSelectionListener(a -> {
 				if (recipeTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
 					String name = (String) recipeTable.getValueAt(recipeTable.getSelectedRow(), 0);
@@ -333,7 +338,7 @@ public class App {
 
 	private static void showChooseRecipeToMakeView() {
 		panel.removeAll();
-		JTable recipeTable = new JTable(new AllRecipesTableModel(tracker.getRecipes()));
+		JTable recipeTable = new JTable(new AllRecipesTableModel(tracker.getRecipes(), tracker));
 		recipeTable.getSelectionModel().addListSelectionListener(a -> {
 				if (recipeTable.getSelectedRow() > -1 && !a.getValueIsAdjusting()) {
 					String name = (String) recipeTable.getValueAt(recipeTable.getSelectedRow(), 0);
@@ -411,6 +416,8 @@ public class App {
 	}
 
 	private static void showPreferencesView() {
+		// TODO: add option for default bottle size to calculate amount of each flavor
+		//				that can be made with current supplies.
 		panel.removeAll();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -420,21 +427,21 @@ public class App {
 
 		JLabel nicotineStrength = new JLabel("Strength (mg/ml):");
 		JTextField nicotineStrengthField = new JTextField(properties.getProperty("nicotine.mg") != null ?
-				properties.getProperty("nicotine.mg") : " ");
+				properties.getProperty("nicotine.mg") : "");
 
 		nicotineSettings.add(nicotineStrength);
 		nicotineSettings.add(nicotineStrengthField);
 
 		JLabel nicotinePg = new JLabel("Percent PG:");
 		JTextField nicotinePgField = new JTextField(properties.getProperty("nicotine.pg") != null ?
-			properties.getProperty("nicotine.pg") : " ");
+			properties.getProperty("nicotine.pg") : "");
 
 		nicotineSettings.add(nicotinePg);
 		nicotineSettings.add(nicotinePgField);
 
 		JLabel nicotineVg = new JLabel("Percent VG:");
 		JTextField nicotineVgField = new JTextField(properties.getProperty("nicotine.vg") != null ?
-			properties.getProperty("nicotine.vg") : " ");
+			properties.getProperty("nicotine.vg") : "");
 
 		nicotineSettings.add(nicotineVg);
 		nicotineSettings.add(nicotineVgField);
@@ -446,13 +453,13 @@ public class App {
 		JPanel flavorSettingPanel = new JPanel(new SpringLayout());
 		JLabel amountRemLabel = new JLabel("Amount remaining before adding to shopping list (ml):");
 		JTextField amountRemField = new JTextField(properties.getProperty("flavor.amtrem") != null ?
-			properties.getProperty("flavor.amtrem") : " ");
+			properties.getProperty("flavor.amtrem") : "");
 		flavorSettingPanel.add(amountRemLabel);
 		flavorSettingPanel.add(amountRemField);
 
 		JLabel pathLabel = new JLabel("Path to flavors folder:");
 		JTextField pathField = new JTextField(properties.getProperty("flavor.path") != null ?
-			properties.getProperty("flavor.path") : " ");
+			properties.getProperty("flavor.path") : "");
 		flavorSettingPanel.add(pathLabel);
 		flavorSettingPanel.add(pathField);
 		SpringUtilities.makeCompactGrid(flavorSettingPanel, 2, 2, 6, 6, 6, 6);
@@ -582,7 +589,7 @@ public class App {
 		newSmartListFrame.setVisible(true);
 	}
 
-	private static void addRecipe(String name, String description, List<JTextField> textFields) {
+	private static void addRecipe(@NotNull String name, @NotNull String description, @NotNull List<JTextField> textFields) {
 		Map<Flavor, Double> recipeMap = getRecipeFromTextFields(textFields);
 		Recipe recipe = new Recipe(name, description, recipeMap);
 		tracker.addRecipe(recipe);
@@ -635,6 +642,14 @@ public class App {
 			flavorPanel.add(flavorAmount);
 			recipePanel.add(flavorPanel);
 		}
+		JPanel limitingFlavorPanel = new JPanel();
+		JLabel limitingFlavorLabel = new JLabel("Limiting Flavor: ");
+		Flavor limitingFlavor = tracker.findLimitingFlavor(recipe);
+		JLabel limitingFlavorName = new JLabel(limitingFlavor.getName() + " (" + limitingFlavor.getManufacturer() + ")");
+		limitingFlavorPanel.add(limitingFlavorLabel);
+		limitingFlavorPanel.add(limitingFlavorName);
+		recipePanel.add(limitingFlavorPanel);
+
 
 		recipeFrame.add(recipePanel);
 		recipeFrame.pack();
@@ -643,6 +658,7 @@ public class App {
 	}
 
 	private static void showMakeRecipeView(@NotNull Recipe recipe) {
+		// TODO: remove name section, redundant with title bar.
 		int amountToMake = Integer.parseInt(JOptionPane.showInputDialog(
 				frame, "How many ml to make?"));
 		String pgVgRatio =JOptionPane.showInputDialog(frame, "Enter your PG/VG ratio (PG/VG)");
@@ -671,10 +687,11 @@ public class App {
 		recipePanel.add(new JSeparator());
 
 		//TODO: DecimalFormat behavior depends on locale, determine if any checks are necessary to ensure problems don't occur.
+		//TODO: label this panel "Base"
 		DecimalFormat df = new DecimalFormat("0.0##");
 		JPanel pgVgNicPanel = new JPanel(new SpringLayout());
 		JLabel nicotineLabel = new JLabel("Nicotine: ");
-		JLabel nicotine = new JLabel(df.format(calculateMlNicotineToAdd(amountToMake) * tracker.getMwNicotine()));
+		JLabel nicotine = new JLabel(df.format(calculateMlNicotineToAdd(amountToMake) * tracker.getMwNicotine()) + " grams");
 
 		pgVgNicPanel.add(nicotineLabel);
 		pgVgNicPanel.add(nicotine);
@@ -696,6 +713,7 @@ public class App {
 
 		JLabel flavorName;
 		JLabel flavorAmount;
+		//TODO label this panel "Flavors"
 		JPanel flavorPanel = new JPanel(new SpringLayout());
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
 			flavorName = new JLabel(entry.getKey().getName() + " (" + entry.getKey().getManufacturer() + "):");

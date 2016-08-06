@@ -16,8 +16,6 @@
 
 package zbb.ui;
 
-import zbb.entities.Recipe;
-
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 

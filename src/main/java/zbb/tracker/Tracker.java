@@ -303,8 +303,8 @@ public class Tracker {
 	}
 
 	public void save() {
-		flavors.stream().forEach(this::writeFlavorToFile);
-		recipes.stream().forEach(this::writeRecipeToFile);
+		flavors.forEach(this::writeFlavorToFile);
+		recipes.forEach(this::writeRecipeToFile);
 		writePgVgNicToFile();
 	}
 
@@ -412,5 +412,26 @@ public class Tracker {
 			}
 		}
 		return shoppingList;
+	}
+
+	public double calculatePossibleAmountToMake(Recipe recipe) {
+		Flavor limitingFlavor = findLimitingFlavor(recipe);
+		double amountPerBottle = recipe.getFlavorAmount(limitingFlavor) * (.01);
+		return limitingFlavor.getAmountRemaining() / amountPerBottle;
+	}
+
+	@NotNull
+	public Flavor findLimitingFlavor(Recipe recipe) {
+		Flavor limitingFlavor = new Flavor("", "");
+		double lowestSoFar = -1;
+		for (Flavor flavor : recipe.getRecipe().keySet()) {
+			double amountPerBottle = recipe.getFlavorAmount(flavor) * (.01);
+			double possibleAmt = flavor.getAmountRemaining() / amountPerBottle;
+			if (possibleAmt < lowestSoFar || lowestSoFar == -1) {
+				lowestSoFar = possibleAmt;
+				limitingFlavor = flavor;
+			}
+		}
+		return  limitingFlavor;
 	}
 }
