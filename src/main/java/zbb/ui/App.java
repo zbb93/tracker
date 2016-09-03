@@ -580,6 +580,7 @@ class App {
 			newSmartListFrame.dispose();
 		});
 		JButton cancel = new JButton("Cancel");
+		cancel.addActionListener(a -> newSmartListFrame.dispose());
 		buttonPanel.add(ok);
 		buttonPanel.add(cancel);
 		contentPanel.add(buttonPanel);
@@ -619,11 +620,6 @@ class App {
 		JPanel namePanel = new JPanel();
 		JPanel descriptionPanel = new JPanel();
 
-		JLabel nameLabel = new JLabel("Name: ");
-		JLabel name = new JLabel(recipe.getName());
-		namePanel.add(nameLabel);
-		namePanel.add(name);
-
 		JLabel descriptionLabel = new JLabel("Description: ");
 		JLabel description = new JLabel(recipe.getDescription());
 		descriptionPanel.add(descriptionLabel);
@@ -631,6 +627,7 @@ class App {
 
 		recipePanel.add(namePanel);
 		recipePanel.add(descriptionPanel);
+		recipePanel.add(new JSeparator());
 
 		JLabel flavorName;
 		JLabel flavorAmount;
@@ -658,7 +655,6 @@ class App {
 	}
 
 	private static void showMakeRecipeView(@NotNull Recipe recipe) {
-		// TODO: remove name section, redundant with title bar.
 		int amountToMake = Integer.parseInt(JOptionPane.showInputDialog(
 				frame, "How many ml to make?"));
 		String pgVgRatio =JOptionPane.showInputDialog(frame, "Enter your PG/VG ratio (PG/VG)");
@@ -670,24 +666,20 @@ class App {
 		recipeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		JPanel recipePanel = new JPanel();
 		recipePanel.setLayout(new BoxLayout(recipePanel, BoxLayout.Y_AXIS));
+		recipePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		JPanel detailPanel = new JPanel(new SpringLayout());
-		JLabel nameLabel = new JLabel("Name: ");
-		JLabel name = new JLabel(recipe.getName());
-		detailPanel.add(nameLabel);
-		detailPanel.add(name);
+		JPanel detailPanel = new JPanel();
 
 		JLabel descriptionLabel = new JLabel("Description: ");
 		JLabel description = new JLabel(recipe.getDescription());
 		detailPanel.add(descriptionLabel);
 		detailPanel.add(description);
 
-		SpringUtilities.makeCompactGrid(detailPanel, 2, 2, 6, 6, 6, 6);
 		recipePanel.add(detailPanel);
 		recipePanel.add(new JSeparator());
 
 		//TODO: DecimalFormat behavior depends on locale, determine if any checks are necessary to ensure problems don't occur.
-		//TODO: label this panel "Base"
+		recipePanel.add(new JLabel("Base"));
 		DecimalFormat df = new DecimalFormat("0.0##");
 		JPanel pgVgNicPanel = new JPanel(new SpringLayout());
 		JLabel nicotineLabel = new JLabel("Nicotine: ");
@@ -713,7 +705,9 @@ class App {
 
 		JLabel flavorName;
 		JLabel flavorAmount;
-		//TODO label this panel "Flavors"
+		JLabel flavorTitle = new JLabel("Flavors");
+		flavorTitle.setHorizontalTextPosition(JLabel.CENTER);
+		recipePanel.add(flavorTitle);
 		JPanel flavorPanel = new JPanel(new SpringLayout());
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
 			flavorName = new JLabel(entry.getKey().getName() + " (" + entry.getKey().getManufacturer() + "):");

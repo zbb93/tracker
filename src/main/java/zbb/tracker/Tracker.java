@@ -82,28 +82,54 @@ public class Tracker {
 	}
 
 	private void loadPgVgNicFromFile() {
+		FileInputStream fis = null;
+		DataInputStream dis = null;
 		try {
 			File file = new File("flavors/misc.txt");
-			FileInputStream fis = new FileInputStream(file);
-			DataInputStream dis = new DataInputStream(fis);
+			fis = new FileInputStream(file);
+			dis = new DataInputStream(fis);
 			vg = dis.readDouble();
 			pg = dis.readDouble();
 			nicotine = dis.readDouble();
 		} catch (IOException exc) {
 			exc.printStackTrace();
+		} finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+				if (dis != null) {
+					dis.close();
+				}
+			} catch (IOException|NullPointerException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void writePgVgNicToFile() {
+		FileOutputStream fos = null;
+		DataOutputStream dos = null;
 		try {
 			File file = new File("flavors/misc.txt");
-			FileOutputStream fos = new FileOutputStream(file);
-			DataOutputStream dos = new DataOutputStream(fos);
+			fos = new FileOutputStream(file);
+			dos = new DataOutputStream(fos);
 			dos.writeDouble(pg);
 			dos.writeDouble(vg);
 			dos.writeDouble(nicotine);
 		} catch (IOException exc) {
 			exc.printStackTrace();
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+				if (dos != null) {
+					dos.close();
+				}
+			} catch (IOException|NullPointerException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
