@@ -489,6 +489,9 @@ class App {
 			tracker.setPathToFlavors(pathField.getText());
 			tracker.setPathToRecipes(recipePathField.getText());
 			tracker.calculateMWofNicotine(nicotineStrengthField.getText(), nicotinePgField.getText(), nicotineVgField.getText());
+
+			saveProperties();
+			showMainMenu();
 		});
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(a -> showMainMenu());
@@ -735,10 +738,16 @@ class App {
 		tracker.usePg(calculateMlPgToAdd(recipe, amount, pg));
 		tracker.useVg(calculateMlVgToAdd(amount, vg));
 		tracker.useNicotine(calculateMlNicotineToAdd(amount));
+		List<Flavor> flavorsToBeAddedToShoppingList = new LinkedList<>();
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
 			tracker.useFlavor(entry.getKey(), calculateMlFlavorToAdd(entry.getKey(), entry.getValue(), amount));
+			if (entry.getKey().getAmountRemaining() < Integer.parseInt(properties.getProperty("flavor.amtrem"))) {
+				flavorsToBeAddedToShoppingList.add(entry.getKey());
+			}
 		}
 		tracker.save();
+		JOptionPane.showMessageDialog(frame, "The following flavors have been added to the shopping list:\n\n" +
+				flavorsToBeAddedToShoppingList.stream().map(f -> f.toString() + "\n"));
 	}
 
 	private static double calculateMlFlavorToAdd(@NotNull Flavor flavor, double percentToAdd, double amountToMake) {
@@ -893,5 +902,25 @@ class App {
 			}
 		}
 		return false;
+	}
+
+	private static void saveProperties() {
+		FileOutputStream fos = null;
+		try {
+			File file = new File("config.properties");
+			file.createNewFile();
+			fos = new FileOutputStream(file);
+			properties.store(fos, null);
+		} catch (IOException e) {
+			throw new RuntimeException("An error occurred while trying to save the properties file", e);
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
