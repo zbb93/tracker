@@ -19,4 +19,5 @@ hs_err_pid*
 config.properties
 flavors/
 recipes/
-
+lists/
+target/

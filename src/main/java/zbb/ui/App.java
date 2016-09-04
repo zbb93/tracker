@@ -738,16 +738,16 @@ class App {
 		tracker.usePg(calculateMlPgToAdd(recipe, amount, pg));
 		tracker.useVg(calculateMlVgToAdd(amount, vg));
 		tracker.useNicotine(calculateMlNicotineToAdd(amount));
-		List<Flavor> flavorsToBeAddedToShoppingList = new LinkedList<>();
+		StringBuilder lowFlavors = new StringBuilder();
 		for (Map.Entry<Flavor, Double> entry : recipe.getRecipe().entrySet()) {
 			tracker.useFlavor(entry.getKey(), calculateMlFlavorToAdd(entry.getKey(), entry.getValue(), amount));
-			if (entry.getKey().getAmountRemaining() < Integer.parseInt(properties.getProperty("flavor.amtrem"))) {
-				flavorsToBeAddedToShoppingList.add(entry.getKey());
+			if (entry.getKey().getAmountRemaining() <= Integer.parseInt(properties.getProperty("flavor.amtrem"))) {
+				lowFlavors.append(entry.getKey().toString());
+				lowFlavors.append("\n");
 			}
 		}
 		tracker.save();
-		JOptionPane.showMessageDialog(frame, "The following flavors have been added to the shopping list:\n\n" +
-				flavorsToBeAddedToShoppingList.stream().map(f -> f.toString() + "\n"));
+		JOptionPane.showMessageDialog(frame, "The following flavors have been added to the shopping list:\n" + lowFlavors.toString());
 	}
 
 	private static double calculateMlFlavorToAdd(@NotNull Flavor flavor, double percentToAdd, double amountToMake) {
