@@ -35,11 +35,6 @@ import org.jetbrains.annotations.*;
 
 class App {
 
-	/**
-	 * TODO: display notification to user when amtRem of flavors used in recipes drops below
-	 * threshold set in preferences.
-	 */
-
 	private static Tracker tracker;
 	private static JFrame frame;
 	private static JPanel panel;
@@ -47,18 +42,13 @@ class App {
 	private static Logger logger;
 
 	public static void main(String... args) {
-		if (init()) {
-			SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
-		}
-	}
-
-	private static boolean init() {
 		LogManager.setup();
 		logger = Logger.getLogger(App.class.getName());
 		properties = new Properties();
 		try (FileInputStream fis = new FileInputStream("config.properties")) {
 			if (!fis.getFD().valid()) {
-				throw new IOException("Sorry, unable to find file: " + fis.getFD().toString());
+				String errorMsg = "Unable to find properties file: \n\tPath: " + fis.getFD().toString();
+				logger.log(Level.WARNING, errorMsg + "\n(File does not exist)");
 			}
 			properties.load(fis);
 			tracker = new Tracker(properties.getProperty("flavor.path"), properties.getProperty("recipe.path"));
@@ -66,7 +56,7 @@ class App {
 					properties.getProperty("nicotine.pg"),
 					properties.getProperty("nicotine.vg"));
 		} catch (IOException e) {
-			logger.log(Level.WARNING, "Unable to load properties file", e);
+			logger.log(Level.SEVERE, "An exception occurred while trying to load the properties file", e);
 			tracker = new Tracker();
 			int response = JOptionPane.showConfirmDialog(frame,
 					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
@@ -76,9 +66,8 @@ class App {
 			} else {
 				SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
 			}
-			return false;
 		}
-		return true;
+		SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
 	}
 
 	private static void buildMainFrameShowPreferences() {
