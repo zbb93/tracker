@@ -16,37 +16,29 @@
 
 package zbb.ui;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.List;
+import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
- * Created by zbb on 7/9/16.
+ * Created by zbb on 9/5/16.
  */
-class ListTableModel extends AbstractTableModel {
-	private final String[] columns = {"Name"};
-	private final List<String> names;
+public class LogManager {
 
-	ListTableModel(List<String> listNames) {
-		this.names = listNames;
-	}
-	@Override
-	public int getRowCount() {
-		return names.size();
-	}
+	private static FileHandler fileHandler;
+	private static SimpleFormatter simpleFormatter;
 
-	@Override
-	public int getColumnCount() {
-		return columns.length;
-	}
+	private LogManager() {}
 
-	@Override
-	public Object getValueAt(int row, int col) {
-		return names.get(row);
-	}
-
-	@Override
-	public String getColumnName(int i) {
-		return columns[i];
+	public static void setup() {
+		Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+		logger.setLevel(Level.INFO);
+		try {
+			fileHandler = new FileHandler("log.txt");
+		} catch (IOException e) {
+			logger.log(Level.SEVERE, "Error creating log file", e);
+		}
 	}
 }
-

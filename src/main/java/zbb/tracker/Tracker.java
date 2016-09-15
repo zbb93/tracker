@@ -1,10 +1,10 @@
 package zbb.tracker;
 
-import zbb.entities.Flavor;
-import zbb.entities.Recipe;
+import zbb.entities.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
 import org.jetbrains.annotations.*;
 
@@ -25,6 +25,7 @@ public class Tracker {
 	private double pg;
 	private double nicotine;
 	private double mwNicotineSolution;
+	private Logger logger;
 
 	public static final double MW_VG = 1.260;
 	public static final double MW_PG = 1.040;
@@ -35,6 +36,7 @@ public class Tracker {
 	 * @param pathToRecipes path to recipes folder; should be obtained from config.properties
 	 */
 	public Tracker(String pathToFlavors, String pathToRecipes) {
+		logger = Logger.getLogger(Tracker.class.getName());
 		pathToFlavorFolder = pathToFlavors;
 		pathToRecipesFolder = pathToRecipes;
 		loadFlavorsFromFile();
@@ -82,28 +84,54 @@ public class Tracker {
 	}
 
 	private void loadPgVgNicFromFile() {
+		FileInputStream fis = null;
+		DataInputStream dis = null;
 		try {
 			File file = new File("flavors/misc.txt");
-			FileInputStream fis = new FileInputStream(file);
-			DataInputStream dis = new DataInputStream(fis);
+			fis = new FileInputStream(file);
+			dis = new DataInputStream(fis);
 			vg = dis.readDouble();
 			pg = dis.readDouble();
 			nicotine = dis.readDouble();
 		} catch (IOException exc) {
-			exc.printStackTrace();
+			logger.log(Level.SEVERE, "Error occurred while attempting to load PG/VG/Nicotine information", exc);
+		} finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+				if (dis != null) {
+					dis.close();
+				}
+			} catch (IOException|NullPointerException e) {
+				logger.log(Level.WARNING, "Error occurred while attempting to close resources after loading PG/VG/Nicotine", e);
+			}
 		}
 	}
 
 	private void writePgVgNicToFile() {
+		FileOutputStream fos = null;
+		DataOutputStream dos = null;
 		try {
 			File file = new File("flavors/misc.txt");
-			FileOutputStream fos = new FileOutputStream(file);
-			DataOutputStream dos = new DataOutputStream(fos);
+			fos = new FileOutputStream(file);
+			dos = new DataOutputStream(fos);
 			dos.writeDouble(pg);
 			dos.writeDouble(vg);
 			dos.writeDouble(nicotine);
 		} catch (IOException exc) {
-			exc.printStackTrace();
+			logger.log(Level.SEVERE, "An error occurred while trying to persist PG/VG/Nicotine information", exc);
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+				if (dos != null) {
+					dos.close();
+				}
+			} catch (IOException|NullPointerException e) {
+				logger.log(Level.WARNING, "Error occurred while attempting to close resources after saving PG/VG/Nicotine", e);
+			}
 		}
 	}
 
@@ -121,14 +149,17 @@ public class Tracker {
 	private void writeFlavorToFile(Flavor flavor) {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
+		String fileName = pathToFlavorFolder + flavor.getName() + ".xml";
 		try {
-			String fileName = pathToFlavorFolder + flavor.getName() + ".xml";
 			fos = new FileOutputStream(fileName);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(flavor);
 		}
 		catch(IOException exc) {
-			exc.printStackTrace();
+			String errorMessage = "An error occurred while trying to save a Flavor: \n" +
+					"\tFlavor: " + flavor.toString() +
+					"\tFile Path: " + fileName;
+			logger.log(Level.SEVERE, errorMessage, exc);
 		} finally {
 			try {
 				if (oos != null) {
@@ -138,7 +169,7 @@ public class Tracker {
 					fos.close();
 				}
 			} catch (NullPointerException|IOException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "An error occurred while trying to close resources after saving a flavor.", e);
 			}
 		}
 	}
@@ -148,13 +179,16 @@ public class Tracker {
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
 		Flavor flavor = null;
+		String path = pathToFlavorFolder + fileName;
 		try {
-			fis = new FileInputStream(pathToFlavorFolder + fileName);
+			fis = new FileInputStream(path);
 			ois = new ObjectInputStream(fis);
 			flavor = (Flavor) ois.readObject();
 		}
 		catch(IOException | ClassNotFoundException exc) {
-			exc.printStackTrace();
+			String errorMessage = "An error occurred while trying to load a Flavor: \n" +
+					"\tFile Path: " + path;
+			logger.log(Level.SEVERE, errorMessage, exc);
 		} finally {
 			try {
 				if (ois != null) {
@@ -164,7 +198,7 @@ public class Tracker {
 					fis.close();
 				}
 			} catch (NullPointerException|IOException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "An error occurred while trying to close resources after loading a flavor", e);
 			}
 		}
 		return flavor;
@@ -174,14 +208,16 @@ public class Tracker {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 
+		String fileName = pathToRecipesFolder + recipe.getName() + ".xml";
 		try {
-			String fileName = pathToRecipesFolder + recipe.getName() + ".xml";
 			fos = new FileOutputStream(fileName);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(recipe);
 		}
 		catch(IOException exc) {
-			exc.printStackTrace();
+			logger.log(Level.SEVERE, "An error occurred while trying to save a recipe:\n" +
+					"\tRecipe: " + recipe.toString() +
+					"\tFile Path: " + fileName, exc);
 		} finally {
 			try {
 				if (fos != null) {
@@ -190,8 +226,8 @@ public class Tracker {
 				if (oos != null) {
 					oos.close();
 				}
-			} catch (NullPointerException|IOException e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				logger.log(Level.WARNING, "An error occurred while trying to close resources after saving a recipe", e);
 			}
 		}
 	}
@@ -209,7 +245,8 @@ public class Tracker {
 			recipe = (Recipe) ois.readObject();
 		}
 		catch(IOException|ClassNotFoundException exc) {
-			exc.printStackTrace();
+			logger.log(Level.SEVERE, "An error occurred while attempting to load a recipe:\n" +
+					"\tPath: " + fileName, exc);
 		} finally {
 			try {
 				if (ois != null) {
@@ -218,8 +255,8 @@ public class Tracker {
 				if (fis != null) {
 					fis.close();
 				}
-			} catch (NullPointerException|IOException e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				logger.log(Level.WARNING, "An error occurred while attempting to close resources after loading a recipe", e);
 			}
 		}
 		return recipe;
@@ -303,8 +340,8 @@ public class Tracker {
 	}
 
 	public void save() {
-		flavors.stream().forEach(this::writeFlavorToFile);
-		recipes.stream().forEach(this::writeRecipeToFile);
+		flavors.forEach(this::writeFlavorToFile);
+		recipes.forEach(this::writeRecipeToFile);
 		writePgVgNicToFile();
 	}
 
@@ -363,14 +400,23 @@ public class Tracker {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		LinkedList<Flavor> list = new LinkedList<>(shoppingList);
+		String fileName = "lists/" + name + ".xml";
 		try {
-			String fileName = "lists/" + name + ".xml";
 			fos = new FileOutputStream(fileName);
 			oos = new ObjectOutputStream(fos);
 			oos.writeObject(list);
 		}
 		catch(IOException exc) {
-			exc.printStackTrace();
+			StringBuilder sb = new StringBuilder("An error occurred while attempting to save a list:\n" +
+					"\tContents:\n");
+			for (Flavor flavor : shoppingList) {
+				sb.append("\t\t");
+				sb.append(flavor.toString());
+			}
+			sb.append("\tPath: ");
+			sb.append(fileName);
+			String errorMsg = sb.toString();
+			logger.log(Level.SEVERE, errorMsg);
 		} finally {
 			try {
 				if (oos != null) {
@@ -379,8 +425,8 @@ public class Tracker {
 				if (fos != null) {
 					fos.close();
 				}
-			} catch (NullPointerException|IOException e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				logger.log(Level.WARNING, "An error occurred attempting to close resources after saving a list", e);
 			}
 		}
 	}
@@ -390,15 +436,15 @@ public class Tracker {
 		FileInputStream fis = null;
 		ObjectInputStream ois = null;
 		List<Flavor> shoppingList = new LinkedList<>();
+		String fileName = "lists/" + name + ".xml";
 		try {
-			String fileName = "lists/" + name + ".xml";
 			fis = new FileInputStream(fileName);
 			ois = new ObjectInputStream(fis);
 			List<?> tempList = (List<?>) ois.readObject();
 			shoppingList = tempList.stream().filter(f -> f instanceof Flavor).map(Flavor.class::cast).collect(Collectors.toList());
 		}
 		catch(ClassNotFoundException | IOException exc) {
-			exc.printStackTrace();
+			logger.log(Level.SEVERE, "An error occurred while trying to load a list\n\tPath: " + fileName, exc);
 		} finally {
 			try {
 				if (ois != null) {
@@ -408,9 +454,30 @@ public class Tracker {
 					fis.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "An error occurred attempting to close resources after loading a list", e);
 			}
 		}
 		return shoppingList;
+	}
+
+	public double calculatePossibleAmountToMake(Recipe recipe) {
+		Flavor limitingFlavor = findLimitingFlavor(recipe);
+		double amountPerBottle = recipe.getFlavorAmount(limitingFlavor) * (.01);
+		return limitingFlavor.getAmountRemaining() / amountPerBottle;
+	}
+
+	@NotNull
+	public Flavor findLimitingFlavor(Recipe recipe) {
+		Flavor limitingFlavor = new Flavor("", "");
+		double lowestSoFar = -1;
+		for (Flavor flavor : recipe.getRecipe().keySet()) {
+			double amountPerBottle = recipe.getFlavorAmount(flavor) * (.01);
+			double possibleAmt = flavor.getAmountRemaining() / amountPerBottle;
+			if (possibleAmt < lowestSoFar || lowestSoFar == -1) {
+				lowestSoFar = possibleAmt;
+				limitingFlavor = flavor;
+			}
+		}
+		return  limitingFlavor;
 	}
 }

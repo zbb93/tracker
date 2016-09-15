@@ -17,6 +17,7 @@
 package zbb.ui;
 
 import zbb.entities.Recipe;
+import zbb.tracker.Tracker;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
@@ -26,11 +27,13 @@ import java.util.List;
  *
  */
 class AllRecipesTableModel extends AbstractTableModel{
-	private final String[] columns = {"Name", "Description"};
+	private final String[] columns = {"Name", "Description", "Possible Amount (ml)"};
 	private final List<Recipe> recipes;
+	private final Tracker tracker;
 
-	AllRecipesTableModel(List<Recipe> recipes) {
+	AllRecipesTableModel(List<Recipe> recipes, Tracker tracker) {
 		this.recipes = recipes;
+		this.tracker = tracker;
 	}
 	@Override
 	public int getRowCount() {
@@ -50,6 +53,8 @@ class AllRecipesTableModel extends AbstractTableModel{
 				return recipe.getName();
 			case (1) :
 				return recipe.getDescription();
+			case (2) :
+				return tracker.calculatePossibleAmountToMake(recipe);
 		}
 		return null;
 	}
