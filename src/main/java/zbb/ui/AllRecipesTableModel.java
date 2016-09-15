@@ -47,7 +47,7 @@ class AllRecipesTableModel extends AbstractTableModel{
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		Recipe recipe = recipes.get(row);
+		final Recipe recipe = recipes.get(row);
 		switch (col) {
 			case (0) :
 				return recipe.getName();
@@ -55,8 +55,9 @@ class AllRecipesTableModel extends AbstractTableModel{
 				return recipe.getDescription();
 			case (2) :
 				return tracker.calculatePossibleAmountToMake(recipe);
+			default:
+				return null;
 		}
-		return null;
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public class Flavor implements Serializable{
 	private String name;
 	private double amountRemaining;
 	private List<String> categories;
-	private final double MW = 1.0;
+	private final double molecularWeight = 1.0;
 
 	public Flavor(@NotNull String manf, @NotNull String name) {
 		this(manf, name, null, -1);
@@ -73,7 +73,7 @@ public class Flavor implements Serializable{
 	}
 
 	public double getMW() {
-		return this.MW;
+		return this.molecularWeight;
 	}
 
 	public List<String> getCategories() {

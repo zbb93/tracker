@@ -16,29 +16,30 @@
 
 package zbb.ui;
 
-import java.io.IOException;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
+import java.io.*;
+import java.util.logging.*;
 
 /**
  * Created by zbb on 9/5/16.
  */
-public class LogManager {
+public final class LogManager {
 
 	private static FileHandler fileHandler;
 	private static SimpleFormatter simpleFormatter;
 
 	private LogManager() {}
 
-	public static void setup() {
-		Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+	static void setup() {
+		final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 		logger.setLevel(Level.INFO);
 		try {
 			fileHandler = new FileHandler("log.txt");
 		} catch (IOException e) {
 			logger.log(Level.SEVERE, "Error creating log file", e);
 		}
+	}
+
+	static void shutdown() {
+		fileHandler.close();
 	}
 }

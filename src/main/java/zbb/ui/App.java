@@ -21,6 +21,8 @@ import zbb.tracker.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.*;
 import java.util.*;
 import java.io.*;
@@ -70,7 +72,7 @@ class App {
 					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
 					"Unable to Locate Properties File", JOptionPane.YES_NO_OPTION);
 			if (response == 0) {
-				SwingUtilities.invokeLater(App::buildMainFrameShowPrefrences);
+				SwingUtilities.invokeLater(App::buildMainFrameShowPreferences);
 			} else {
 				SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
 			}
@@ -79,39 +81,27 @@ class App {
 		return true;
 	}
 
-	private static void buildMainFrameShowPrefrences() {
-		//Create and set up the window.
-		frame = new JFrame("Eliquid Manager");
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-		panel = new JPanel(new BorderLayout());
-		frame.setContentPane(panel);
-
-		JMenuBar menuBar = new JMenuBar();
-		JMenu menu = new JMenu("File");
-		JMenuItem mainMenu = new JMenuItem("Main Menu");
-		mainMenu.addActionListener(a -> showMainMenu());
-		menu.add(mainMenu);
-		JMenuItem menuItem = new JMenuItem("Preferences");
-		menuItem.addActionListener(a -> showPreferencesView());
-		menu.add(menuItem);
-		menuBar.add(menu);
-		menu = new JMenu("View");
-		menuItem = new JMenuItem("Recipes");
-		menuItem.addActionListener(a -> showRecipeView());
-		menu.add(menuItem);
-		menuItem = new JMenuItem("Flavors");
-		menuItem.addActionListener(a -> showFlavorView());
-		menu.add(menuItem);
-		menuBar.add(menu);
-		frame.setJMenuBar(menuBar);
+	private static void buildMainFrameShowPreferences() {
+		buildMainFrame();
 		showPreferencesView();
 	}
 
 	private static void buildMainFrameShowMainMenu() {
+		buildMainFrame();
+		showMainMenu();
+	}
+
+	private static void buildMainFrame() {
 		//Create and set up the window.
 		frame = new JFrame("Eliquid Manager");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent windowEvent) {
+				LogManager.shutdown();
+			}
+		});
 
 		panel = new JPanel(new BorderLayout());
 		frame.setContentPane(panel);
@@ -134,7 +124,6 @@ class App {
 		menu.add(menuItem);
 		menuBar.add(menu);
 		frame.setJMenuBar(menuBar);
-		showMainMenu();
 	}
 
 	private static void showFlavorView() {

@@ -46,18 +46,19 @@ class FlavorTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		Flavor flavor = flavors.get(row);
+		final Flavor flavor = flavors.get(row);
 		switch (col) {
 			case (0):
-				if (!flavor.getManufacturer().equals("")) {
+				if (!("".equals(flavor.getManufacturer()))) {
 					return flavor.getName() + " (" + flavor.getManufacturer() + ")";
 				} else {
 					return flavor.getName();
 				}
 			case (1):
 				return flavor.getAmountRemaining();
+			default:
+				return null;
 		}
-		return null;
 	}
 
 	@Override
