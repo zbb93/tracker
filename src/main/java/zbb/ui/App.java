@@ -25,6 +25,8 @@ import java.text.*;
 import java.util.*;
 import java.io.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.*;
@@ -40,6 +42,7 @@ class App {
 	private static JFrame frame;
 	private static JPanel panel;
 	private static Properties properties;
+	private static Logger logger;
 
 	public static void main(String... args) {
 		if (init()) {
@@ -48,6 +51,8 @@ class App {
 	}
 
 	private static boolean init() {
+		LogManager.setup();
+		logger = Logger.getLogger(App.class.getName());
 		properties = new Properties();
 		try (FileInputStream fis = new FileInputStream("config.properties")) {
 			if (!fis.getFD().valid()) {
@@ -59,6 +64,7 @@ class App {
 					properties.getProperty("nicotine.pg"),
 					properties.getProperty("nicotine.vg"));
 		} catch (IOException e) {
+			logger.log(Level.WARNING, "Unable to load properties file", e);
 			tracker = new Tracker();
 			int response = JOptionPane.showConfirmDialog(frame,
 					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
@@ -908,11 +914,18 @@ class App {
 		FileOutputStream fos = null;
 		try {
 			File file = new File("config.properties");
-			file.createNewFile();
+			//TODO should this be getPath or CanonicalPath or AbsolutePath?
+			if (file.createNewFile()) {
+				logger.log(Level.INFO, "Creating new config file:\n\tPath: " + file.getPath());
+			} else {
+				logger.log(Level.INFO, "Loading properties from file:\n\tPath: " + file.getPath());
+			}
 			fos = new FileOutputStream(file);
 			properties.store(fos, null);
 		} catch (IOException e) {
-			throw new RuntimeException("An error occurred while trying to save the properties file", e);
+			logger.log(Level.SEVERE, "An error occurred while trying to save the properties file", e);
+			JOptionPane.showMessageDialog(frame, "An error occurred while trying to save the properties file", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		} finally {
 			try {
 				if (fos != null) {
