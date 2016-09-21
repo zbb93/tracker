@@ -1,5 +1,8 @@
 package zbb.tracker;
 
+import nu.xom.Document;
+import nu.xom.ParsingException;
+import nu.xom.Serializer;
 import zbb.entities.*;
 
 import java.io.*;
@@ -148,23 +151,23 @@ public class Tracker {
 
 	private void writeFlavorToFile(Flavor flavor) {
 		FileOutputStream fos = null;
-		ObjectOutputStream oos = null;
 		String fileName = pathToFlavorFolder + flavor.getName() + ".xml";
 		try {
 			fos = new FileOutputStream(fileName);
-			oos = new ObjectOutputStream(fos);
-			oos.writeObject(flavor);
+			Serializer serializer = new Serializer(fos, "ISO-8859-1");
+			serializer.setIndent(4);
+			serializer.setMaxLength(64);
+			Document doc = flavor.toXml();
+			serializer.write(doc);
 		}
 		catch(IOException exc) {
 			String errorMessage = "An error occurred while trying to save a Flavor: \n" +
 					"\tFlavor: " + flavor.toString() +
-					"\tFile Path: " + fileName;
+					"\tFile Path: " + fileName +
+					"Document:\n\t" + flavor.toXml().toString();
 			logger.log(Level.SEVERE, errorMessage, exc);
 		} finally {
 			try {
-				if (oos != null) {
-					oos.close();
-				}
 				if (fos != null) {
 					fos.close();
 				}
@@ -176,30 +179,14 @@ public class Tracker {
 
 	@Nullable
 	private Flavor readFlavor(String fileName) {
-		FileInputStream fis = null;
-		ObjectInputStream ois = null;
-		Flavor flavor = null;
 		String path = pathToFlavorFolder + fileName;
+		Flavor flavor = null;
 		try {
-			fis = new FileInputStream(path);
-			ois = new ObjectInputStream(fis);
-			flavor = (Flavor) ois.readObject();
-		}
-		catch(IOException | ClassNotFoundException exc) {
-			String errorMessage = "An error occurred while trying to load a Flavor: \n" +
-					"\tFile Path: " + path;
-			logger.log(Level.SEVERE, errorMessage, exc);
-		} finally {
-			try {
-				if (ois != null) {
-					ois.close();
-				}
-				if (fis != null) {
-					fis.close();
-				}
-			} catch (NullPointerException|IOException e) {
-				logger.log(Level.WARNING, "An error occurred while trying to close resources after loading a flavor", e);
-			}
+			flavor = Flavor.constructFromXml(new File(path));
+		} catch (ParsingException |IOException exc) {
+			String error = "An error occurred while trying to read a flavor from a file." +
+					"\n\tPath: " + fileName;
+			logger.log(Level.SEVERE, error, exc);
 		}
 		return flavor;
 	}

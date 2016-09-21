@@ -3,8 +3,7 @@ package zbb.entities;
 import java.io.*;
 import java.util.*;
 
-import nu.xom.Document;
-import nu.xom.Element;
+import nu.xom.*;
 import org.jetbrains.annotations.*;
 
 /**
@@ -103,5 +102,30 @@ public class Flavor implements Serializable{
 		flavor.appendChild(categories);
 		flavor.appendChild(amtRem);
 		return new Document(root);
+	}
+
+	public static Flavor constructFromXml(File file)
+			throws IOException, ParsingException {
+		Builder builder = new Builder();
+		Document doc = builder.build(file);
+		Element root = doc.getRootElement();
+		Element flavorElem = root.getFirstChildElement("Flavor");
+		Elements flavorNameElem = flavorElem.getChildElements();
+		String flavorName = flavorNameElem.get(0).getValue();
+
+		Element manf = flavorElem.getFirstChildElement("Manufacturer");
+		String flavorManf = manf.getChild(0).getValue();
+
+		Element categoriesElem = flavorElem.getFirstChildElement("Categories");
+		Elements categoryElems = categoriesElem.getChildElements();
+		List<String> categories = new LinkedList<>();
+		for (int i = 0; i < categoryElems.size(); i++) {
+			categories.add(categoryElems.get(i).getValue());
+		}
+
+		Element amtRemElem = flavorElem.getFirstChildElement("AmountRemaining");
+		double amtRem = Double.valueOf(amtRemElem.getChild(0).getValue());
+
+		return new Flavor(flavorManf, flavorName, categories, amtRem);
 	}
 }

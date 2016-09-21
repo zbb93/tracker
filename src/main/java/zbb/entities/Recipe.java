@@ -1,6 +1,7 @@
 package zbb.entities;
 
-import javax.xml.bind.annotation.XmlElement;
+import nu.xom.Document;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -28,7 +29,6 @@ public class Recipe implements Serializable{
 		return name;
 	}
 
-	@XmlElement
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -38,7 +38,6 @@ public class Recipe implements Serializable{
 		return recipe;
 	}
 
-	@XmlElement
 	public void setRecipe(Map<Flavor, Double> recipe) {
 		this.recipe = recipe;
 	}

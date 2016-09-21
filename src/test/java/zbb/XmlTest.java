@@ -16,24 +16,14 @@
 
 package zbb;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import nu.xom.*;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.junit.Test;
-import sun.awt.image.ImageWatched;
+import org.junit.*;
+import org.junit.runner.*;
+import org.junit.runners.*;
 import zbb.entities.Flavor;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.jar.Pack200;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by zbb on 9/14/16.
