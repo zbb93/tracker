@@ -45,29 +45,46 @@ class App {
 		LogManager.setup();
 		logger = Logger.getLogger(App.class.getName());
 		properties = new Properties();
-		try (FileInputStream fis = new FileInputStream("config.properties")) {
-			if (!fis.getFD().valid()) {
-				String errorMsg = "Unable to find properties file: \n\tPath: " + fis.getFD().toString();
-				logger.log(Level.WARNING, errorMsg + "\n(File does not exist)");
-			}
-			properties.load(fis);
-			tracker = new Tracker(properties.getProperty("flavor.path"), properties.getProperty("recipe.path"));
-			tracker.calculateMWofNicotine(properties.getProperty("nicotine.mg"),
-					properties.getProperty("nicotine.pg"),
-					properties.getProperty("nicotine.vg"));
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, "An exception occurred while trying to load the properties file", e);
-			tracker = new Tracker();
-			int response = JOptionPane.showConfirmDialog(frame,
-					"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
-					"Unable to Locate Properties File", JOptionPane.YES_NO_OPTION);
-			if (response == 0) {
+		if (propertiesFileExists()) {
+			loadPropertiesFile();
+			initTracker();
+			SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
+		} else {
+			String errorMsg = "Unable to find properties file: \n\tPath: ./config.properties";
+			logger.log(Level.WARNING, errorMsg + "\n(File does not exist)");
+			if (setPreferencesNow()) {
 				SwingUtilities.invokeLater(App::buildMainFrameShowPreferences);
 			} else {
 				SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
 			}
 		}
-		SwingUtilities.invokeLater(App::buildMainFrameShowMainMenu);
+	}
+
+	private static boolean propertiesFileExists() {
+		File propertiesFile = new File("config.properties");
+		return propertiesFile.exists();
+	}
+
+	private static void loadPropertiesFile() {
+		try (FileInputStream fis = new FileInputStream("config.properties")) {
+			properties.load(fis);
+		} catch (IOException exc) {
+			// todo get descriptive
+			logger.log(Level.SEVERE, "An exception occurred while trying to load the properties file", exc);
+		}
+	}
+
+	private static void initTracker() {
+		tracker = new Tracker(properties.getProperty("flavor.path"), properties.getProperty("recipe.path"));
+		tracker.calculateMWofNicotine(properties.getProperty("nicotine.mg"),
+				properties.getProperty("nicotine.pg"),
+				properties.getProperty("nicotine.vg"));
+	}
+
+	private static boolean setPreferencesNow() {
+		return JOptionPane.showConfirmDialog(frame,
+				"You will not be able to make recipes without setting nicotine properties. Would you like to do this now?",
+				"Unable to Locate Properties File", JOptionPane.YES_NO_OPTION) == 0;
 	}
 
 	private static void buildMainFrameShowPreferences() {
