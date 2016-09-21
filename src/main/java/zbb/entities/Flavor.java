@@ -3,6 +3,8 @@ package zbb.entities;
 import java.io.*;
 import java.util.*;
 
+import nu.xom.Document;
+import nu.xom.Element;
 import org.jetbrains.annotations.*;
 
 /**
@@ -78,5 +80,28 @@ public class Flavor implements Serializable{
 
 	public List<String> getCategories() {
 		return categories;
+	}
+
+	public Document toXml() {
+		Element root = new Element("Root");
+		Element flavor = new Element("Flavor");
+		root.appendChild(flavor);
+		Element name = new Element("Name");
+		name.appendChild(this.name);
+		Element manf = new Element("Manufacturer");
+		manf.appendChild(this.manufacturer);
+		Element amtRem = new Element("AmountRemaining");
+		amtRem.appendChild(Double.toString(this.amountRemaining));
+		Element categories = new Element("Categories");
+		for (String s : this.categories) {
+			Element category = new Element("Category");
+			category.appendChild(s);
+			categories.appendChild(category);
+		}
+		flavor.appendChild(name);
+		flavor.appendChild(manf);
+		flavor.appendChild(categories);
+		flavor.appendChild(amtRem);
+		return new Document(root);
 	}
 }
