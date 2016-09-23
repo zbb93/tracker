@@ -3,6 +3,7 @@ package zbb.entities;
 import java.io.*;
 import java.util.*;
 
+import nu.xom.*;
 import org.jetbrains.annotations.*;
 
 /**
@@ -78,5 +79,53 @@ public class Flavor implements Serializable{
 
 	public List<String> getCategories() {
 		return categories;
+	}
+
+	public Document toXml() {
+		final Element root = new Element("Root");
+		final Element flavor = new Element("Flavor");
+		root.appendChild(flavor);
+		final Element nameElem = new Element("Name");
+		nameElem.appendChild(name);
+		final Element manfElem = new Element("Manufacturer");
+		manfElem.appendChild(manufacturer);
+		final Element amtRem = new Element("AmountRemaining");
+		amtRem.appendChild(Double.toString(this.amountRemaining));
+		final Element categoriesElem = new Element("Categories");
+		for (String s : this.categories) {
+			final Element category = new Element("Category");
+			category.appendChild(s);
+			categoriesElem.appendChild(category);
+		}
+		flavor.appendChild(nameElem);
+		flavor.appendChild(manfElem);
+		flavor.appendChild(categoriesElem);
+		flavor.appendChild(amtRem);
+		return new Document(root);
+	}
+
+	public static Flavor constructFromXml(File file)
+			throws IOException, ParsingException {
+		final Builder builder = new Builder();
+		final Document doc = builder.build(file);
+		final Element root = doc.getRootElement();
+		final Element flavorElem = root.getFirstChildElement("Flavor");
+		final Elements flavorNameElem = flavorElem.getChildElements();
+		final String flavorName = flavorNameElem.get(0).getValue();
+
+		final Element manf = flavorElem.getFirstChildElement("Manufacturer");
+		final String flavorManf = manf.getChild(0).getValue();
+
+		final Element categoriesElem = flavorElem.getFirstChildElement("Categories");
+		final Elements categoryElems = categoriesElem.getChildElements();
+		final List<String> categories = new LinkedList<>();
+		for (int i = 0; i < categoryElems.size(); i++) {
+			categories.add(categoryElems.get(i).getValue());
+		}
+
+		final Element amtRemElem = flavorElem.getFirstChildElement("AmountRemaining");
+		final double amtRem = Double.valueOf(amtRemElem.getChild(0).getValue());
+
+		return new Flavor(flavorManf, flavorName, categories, amtRem);
 	}
 }
