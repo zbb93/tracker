@@ -62,7 +62,7 @@ public class Tracker {
 
 	private void loadFlavorsFromFile() {
 		flavors = new ArrayList<>();
-		File flavorFolder = new File("flavors/");
+		File flavorFolder = new File(pathToFlavorFolder);
 		File[] flavorFiles = flavorFolder.listFiles();
 		if (flavorFiles != null) {
 			for (File flavorFile : flavorFiles) {
@@ -76,7 +76,7 @@ public class Tracker {
 
 	private void loadRecipesFromFile() {
 		recipes = new ArrayList<>();
-		File recipeFolder = new File("recipes/");
+		File recipeFolder = new File(pathToRecipesFolder);
 		File[] recipeFiles = recipeFolder.listFiles();
 		if (recipeFiles != null) {
 			for (File recipeFile : recipeFiles) {
@@ -90,7 +90,7 @@ public class Tracker {
 		FileInputStream fis = null;
 		DataInputStream dis = null;
 		try {
-			File file = new File("flavors/misc.txt");
+			File file = new File(pathToFlavorFolder + "misc.txt");
 			fis = new FileInputStream(file);
 			dis = new DataInputStream(fis);
 			vg = dis.readDouble();
@@ -116,7 +116,7 @@ public class Tracker {
 		FileOutputStream fos = null;
 		DataOutputStream dos = null;
 		try {
-			File file = new File("flavors/misc.txt");
+			File file = new File(pathToFlavorFolder + "misc.txt");
 			fos = new FileOutputStream(file);
 			dos = new DataOutputStream(fos);
 			dos.writeDouble(pg);
@@ -193,13 +193,15 @@ public class Tracker {
 
 	private void writeRecipeToFile(Recipe recipe) {
 		FileOutputStream fos = null;
-		ObjectOutputStream oos = null;
 
 		String fileName = pathToRecipesFolder + recipe.getName() + ".xml";
 		try {
 			fos = new FileOutputStream(fileName);
-			oos = new ObjectOutputStream(fos);
-			oos.writeObject(recipe);
+			Serializer serializer = new Serializer(fos, "ISO-8859-1");
+			serializer.setIndent(4);
+			serializer.setMaxLength(64);
+			Document doc = recipe.toXml();
+			serializer.write(doc);
 		}
 		catch(IOException exc) {
 			logger.log(Level.SEVERE, "An error occurred while trying to save a recipe:\n" +
@@ -209,9 +211,6 @@ public class Tracker {
 			try {
 				if (fos != null) {
 					fos.close();
-				}
-				if (oos != null) {
-					oos.close();
 				}
 			} catch (IOException e) {
 				logger.log(Level.WARNING, "An error occurred while trying to close resources after saving a recipe", e);
@@ -223,28 +222,14 @@ public class Tracker {
 
 	@Nullable
 	private Recipe readRecipe(String fileName) {
-		FileInputStream fis = null;
-		ObjectInputStream ois = null;
+		String path = pathToRecipesFolder + fileName;
 		Recipe recipe = null;
 		try {
-			fis = new FileInputStream(pathToRecipesFolder + fileName);
-			ois = new ObjectInputStream(fis);
-			recipe = (Recipe) ois.readObject();
+			recipe = Recipe.constructFromXml(new File(path));
 		}
-		catch(IOException|ClassNotFoundException exc) {
+		catch(IOException|ParsingException exc) {
 			logger.log(Level.SEVERE, "An error occurred while attempting to load a recipe:\n" +
 					"\tPath: " + fileName, exc);
-		} finally {
-			try {
-				if (ois != null) {
-					ois.close();
-				}
-				if (fis != null) {
-					fis.close();
-				}
-			} catch (IOException e) {
-				logger.log(Level.WARNING, "An error occurred while attempting to close resources after loading a recipe", e);
-			}
 		}
 		return recipe;
 	}
@@ -460,7 +445,7 @@ public class Tracker {
 		for (Flavor flavor : recipe.getRecipe().keySet()) {
 			double amountPerBottle = recipe.getFlavorAmount(flavor) * (.01);
 			double possibleAmt = flavor.getAmountRemaining() / amountPerBottle;
-			if (possibleAmt < lowestSoFar || lowestSoFar == -1) {
+			if (possibleAmt < lowestSoFar || Math.abs(lowestSoFar - (-1)) < 0.001) {
 				lowestSoFar = possibleAmt;
 				limitingFlavor = flavor;
 			}

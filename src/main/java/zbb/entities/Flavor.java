@@ -82,49 +82,49 @@ public class Flavor implements Serializable{
 	}
 
 	public Document toXml() {
-		Element root = new Element("Root");
-		Element flavor = new Element("Flavor");
+		final Element root = new Element("Root");
+		final Element flavor = new Element("Flavor");
 		root.appendChild(flavor);
-		Element name = new Element("Name");
-		name.appendChild(this.name);
-		Element manf = new Element("Manufacturer");
-		manf.appendChild(this.manufacturer);
-		Element amtRem = new Element("AmountRemaining");
+		final Element nameElem = new Element("Name");
+		nameElem.appendChild(name);
+		final Element manfElem = new Element("Manufacturer");
+		manfElem.appendChild(manufacturer);
+		final Element amtRem = new Element("AmountRemaining");
 		amtRem.appendChild(Double.toString(this.amountRemaining));
-		Element categories = new Element("Categories");
+		final Element categoriesElem = new Element("Categories");
 		for (String s : this.categories) {
-			Element category = new Element("Category");
+			final Element category = new Element("Category");
 			category.appendChild(s);
-			categories.appendChild(category);
+			categoriesElem.appendChild(category);
 		}
-		flavor.appendChild(name);
-		flavor.appendChild(manf);
-		flavor.appendChild(categories);
+		flavor.appendChild(nameElem);
+		flavor.appendChild(manfElem);
+		flavor.appendChild(categoriesElem);
 		flavor.appendChild(amtRem);
 		return new Document(root);
 	}
 
 	public static Flavor constructFromXml(File file)
 			throws IOException, ParsingException {
-		Builder builder = new Builder();
-		Document doc = builder.build(file);
-		Element root = doc.getRootElement();
-		Element flavorElem = root.getFirstChildElement("Flavor");
-		Elements flavorNameElem = flavorElem.getChildElements();
-		String flavorName = flavorNameElem.get(0).getValue();
+		final Builder builder = new Builder();
+		final Document doc = builder.build(file);
+		final Element root = doc.getRootElement();
+		final Element flavorElem = root.getFirstChildElement("Flavor");
+		final Elements flavorNameElem = flavorElem.getChildElements();
+		final String flavorName = flavorNameElem.get(0).getValue();
 
-		Element manf = flavorElem.getFirstChildElement("Manufacturer");
-		String flavorManf = manf.getChild(0).getValue();
+		final Element manf = flavorElem.getFirstChildElement("Manufacturer");
+		final String flavorManf = manf.getChild(0).getValue();
 
-		Element categoriesElem = flavorElem.getFirstChildElement("Categories");
-		Elements categoryElems = categoriesElem.getChildElements();
-		List<String> categories = new LinkedList<>();
+		final Element categoriesElem = flavorElem.getFirstChildElement("Categories");
+		final Elements categoryElems = categoriesElem.getChildElements();
+		final List<String> categories = new LinkedList<>();
 		for (int i = 0; i < categoryElems.size(); i++) {
 			categories.add(categoryElems.get(i).getValue());
 		}
 
-		Element amtRemElem = flavorElem.getFirstChildElement("AmountRemaining");
-		double amtRem = Double.valueOf(amtRemElem.getChild(0).getValue());
+		final Element amtRemElem = flavorElem.getFirstChildElement("AmountRemaining");
+		final double amtRem = Double.valueOf(amtRemElem.getChild(0).getValue());
 
 		return new Flavor(flavorManf, flavorName, categories, amtRem);
 	}

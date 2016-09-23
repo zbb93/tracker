@@ -29,7 +29,7 @@ import java.util.*;
  * Created by zbb on 9/14/16.
  */
 @RunWith(JUnit4.class)
-public class XmlTest {
+public class FlavorXmlTest {
 
 	private File file;
 
@@ -48,7 +48,7 @@ public class XmlTest {
 			serializer.setMaxLength(64);
 			serializer.write(doc);
 		} catch (IOException exc) {
-
+			exc.printStackTrace();
 		}
 	}
 
@@ -77,7 +77,9 @@ public class XmlTest {
 			double amtRem = Double.valueOf(amtRemElem.getChild(0).getValue());
 
 			flavor = new Flavor(flavorManf, flavorName, categories, amtRem);
-		} catch (ParsingException|IOException pe) {}
+		} catch (ParsingException|IOException exc) {
+			exc.printStackTrace();
+		}
 		List<String> expectedCategories = new LinkedList<>();
 		expectedCategories.add("Fruit");
 		expectedCategories.add("Candy");
